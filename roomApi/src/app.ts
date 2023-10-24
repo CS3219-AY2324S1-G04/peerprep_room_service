@@ -39,7 +39,7 @@ export default class App {
 
 
     const corsOptions = {
-      origin: /https:\/\/localhost:[0-9]+/, // Regular expression to match localhost with any port number
+      origin:new RegExp('http://localhost:[0-9]+'), // Regular expression to match localhost with any port number
       credentials: true,
     };
 
