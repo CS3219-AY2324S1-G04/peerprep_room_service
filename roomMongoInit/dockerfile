@@ -1,0 +1,10 @@
+FROM node:lts-hydrogen
+
+COPY ./build /peerprep_room_service_mongoInit/
+COPY package.json /peerprep_room_service_mongoInit/
+
+WORKDIR /peerprep_room_service_mongoInit
+
+RUN npm install --omit=dev -y
+
+CMD node main.js

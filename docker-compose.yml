@@ -1,0 +1,61 @@
+version: "3"
+services:
+  peerprep_room_service_api:
+    container_name: "peerprep_room_service_api"
+    depends_on:
+      - peerprep_room_service_mongo
+    image: peerprep_room_service_api
+    build: ./roomApi
+    restart: always
+    environment:
+      RS_EXPRESS_PORT: ${RS_EXPRESS_PORT}
+      RS_ROOM_EXPIRY: ${RS_ROOM_EXPIRY}
+      RS_ROOM_EXTEND_BY : ${RS_ROOM_EXTEND_BY}
+
+      RS_MONGO_HOST: peerprep_room_service_mongo
+      RS_MONGO_PORT: ${RS_MONGO_PORT}
+      RS_MONGO_DB: ${RS_MONGO_DB}
+      RS_MONGO_USER: ${RS_MONGO_USER}
+      RS_MONGO_PASS: ${RS_MONGO_PASS}
+
+      SERVICE_USER_HOST: user_service_api 
+      SERVICE_USER_PORT: "${SERVICE_USER_PORT}" 
+
+    networks:
+      - peerprep
+
+    ports:
+      - "${RS_EXPRESS_PORT}:${RS_EXPRESS_PORT}"
+
+  peerprep_room_service_mongo:
+    container_name: "peerprep_room_service_mongo"
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_PORT: ${RS_MONGO_PORT}
+      MONGO_DB: ${RS_MONGO_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${RS_MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${RS_MONGO_PASS}
+
+    networks:
+      - peerprep
+
+  peerprep_room_service_mongo_init:
+    container_name: "peerprep_room_service_mongo_init"
+    depends_on:
+      - peerprep_room_service_mongo
+    image: peerprep_room_service_mongo_init
+    build: ./roomMongoInit
+    environment:
+      RS_MONGO_HOST: peerprep_room_service_mongo
+      RS_MONGO_PORT: ${RS_MONGO_PORT}
+      RS_MONGO_DB: ${RS_MONGO_DB}
+      RS_MONGO_USER: ${RS_MONGO_USER}
+      RS_MONGO_PASS: ${RS_MONGO_PASS}
+
+    networks:
+      - peerprep
+
+networks:
+  peerprep:
+    external: true
