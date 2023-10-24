@@ -24,7 +24,7 @@ While it is possible to have the room-service share a mongo database with anothe
 ### APP
 
 - `RS_EXPRESS_PORT` - Port of the Express server.
-- `RS_ROOM_EXPIRY` -  Suggested time in milliseconds (i.e. 5 * 60 * 1000 = 300000) for when the document should be deleted from MongoDB upon creation. This application uses MongoDB's expire-At to delete the collection, which means the actual time it is deleted, is 1 minute after the specified time. 
+- `RS_ROOM_EXPIRY` -  Suggested time in milliseconds (i.e. 5 * 60 * 1000 = 300000) for when the document should be deleted from MongoDB upon creation. This application uses MongoDB's expire-At to delete the collection, which means the actual time the item is deleted could be one 1 minute after the specified time. 
 
 ## REST API
 
