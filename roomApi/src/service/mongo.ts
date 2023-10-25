@@ -40,8 +40,10 @@ export default class mongoClient {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 30000,
       } as ConnectOptions);
+
+      console.log("Successfully connected to mongo!")
     } catch (error) {
       console.error("Unable to reach Mongo Server!");
       console.error(error);

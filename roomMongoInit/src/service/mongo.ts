@@ -35,42 +35,39 @@ export default class mongoClient {
    * @param uri the
    */
   private async connect(uri: string): Promise<void> {
-    this.connection = await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      serverSelectionTimeoutMS: 5000,
-    } as ConnectOptions);
     try {
       this.connection = await mongoose.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 30000,
       } as ConnectOptions);
+
+      /**
+       * Initializes the collection, and then delete the items that were created
+       */
+      const options = { upsert: true, setDefaultsOnInsert: true };
+
+      const updateRoomInfo = {
+        userIDs: ['0', '0'],
+        expireAt: new Date(new Date().getTime() + 10),
+      };
+
+      // Insert into DB
+      await Promise.all([
+        roomInfoModel.updateOne({ questionID: '1' }, updateRoomInfo, options),
+      ]);
+
+      // Delete them because served purpose
+      await Promise.all([roomInfoModel.deleteOne({ userIDs: { $in: ['0'] } })]);
+
+      await this.connection.disconnect();
+      console.log("Success, you may now delete this service.")
+
     } catch (error) {
       console.error("Unable to reach Mongo Server!");
       console.error(error);
     } 
-    /**
-   * Initializes the collection, and then delete the items that were created
-   */
-    const options = { upsert: true, setDefaultsOnInsert: true };
-
-    const updateRoomInfo = {
-      userIDs: ['0', '0'],
-      expireAt: new Date(new Date().getTime() + 10),
-    };
-
-    // Insert into DB
-    await Promise.all([
-      roomInfoModel.updateOne({ questionID: '1' }, updateRoomInfo, options),
-    ]);
-
-    // Delete them because served purpose
-    await Promise.all([roomInfoModel.deleteOne({ userIDs: { $in: ['0'] } })]);
-
-    await this.connection.disconnect();
-    console.log("Success, you may now delete this service.")
+    
   }
 }
