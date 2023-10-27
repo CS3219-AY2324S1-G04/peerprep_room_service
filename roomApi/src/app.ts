@@ -38,18 +38,27 @@ export default class App {
     });
 
 
-    const corsOptions = {
-      origin:new RegExp('http://localhost:[0-9]+'), // Regular expression to match localhost with any port number
-      credentials: true,
-    };
+    // const corsOptions = {
+    //   origin:new RegExp('http://localhost:[0-9]+'), // Regular expression to match localhost with any port number
+    //   credentials: true,
+    // };
 
-    this.app.use(cors(corsOptions));
+    // this.app.use(cors(corsOptions));
   }
 
   /**
    * Starts listening and activates ttl.
    */
   public startServer(): void {
+
+    const corsOptions = {
+      origin:new RegExp('http://localhost:[0-9]+'), // Regular expression to match localhost with any port number
+      credentials: true,
+    };
+
+    this.app.use(cors(corsOptions));
+
+
     this.app.listen(this.port, () => {
       console.log(`Room Service is running on port ${this.port}`);
     });
