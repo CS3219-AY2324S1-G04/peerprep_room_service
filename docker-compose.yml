@@ -8,6 +8,7 @@ services:
     build: ./roomApi
     restart: always
     environment:
+      NODE_ENV: ${NODE_ENV}
       RS_EXPRESS_PORT: ${RS_EXPRESS_PORT}
       RS_ROOM_EXPIRY: ${RS_ROOM_EXPIRY}
       RS_ROOM_EXTEND_BY : ${RS_ROOM_EXTEND_BY}

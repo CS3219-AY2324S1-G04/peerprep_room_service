@@ -19,6 +19,8 @@ export default class Config {
   private static readonly envUserServiceHost: string = 'SERVICE_USER_HOST';
   private static readonly envUserServicePort: string = 'SERVICE_USER_PORT';
 
+  private static readonly appModeEnvVar: string = 'NODE_ENV';
+
   private static instance: Config | undefined;
 
   /** Copies from Environment and save into these variable names. */
@@ -33,6 +35,8 @@ export default class Config {
 
   public readonly expressPort: number;
   public readonly userServiceURI: string | undefined;
+
+  public readonly isDevEnv: boolean;
 
   private readonly defaultMongoHost: string = '127.0.0.1';
   private readonly defaultMongoPort: number = 27017;
@@ -69,6 +73,8 @@ export default class Config {
       Config._parseInt(env[Config.envVarMongoRoomExtend]) ?? this.defaultMongoRoomExtend;
 
     this.expressPort = Config._parseInt(env[Config.envVarExpressPort]) ?? this.defaultExpressPort;
+
+    this.isDevEnv = env[Config.appModeEnvVar] === 'development';
 
     const _userServiceHost = env[Config.envUserServiceHost];
     const _userServicePort = env[Config.envUserServicePort]
