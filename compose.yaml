@@ -1,0 +1,61 @@
+services:
+  room_service_database:
+    image: postgres:16-bookworm
+    networks:
+      - peerprep_network
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_NAME}
+    restart: unless-stopped
+
+  room_service_database_initialiser:
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_database_initialiser
+    build:
+      context: .
+      dockerfile: ./dockerfiles/database_initialiser.dockerfile
+    networks:
+      - peerprep_network
+    environment:
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: 'room_service_database'
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
+      DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
+      SHOULD_FORCE_INITIALISATION: ${SHOULD_FORCE_INITIALISATION}
+    depends_on:
+      - room_service_database
+    restart: on-failure
+
+  room_service_api:
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api
+    build:
+      context: .
+      dockerfile: ./dockerfiles/api.dockerfile
+    networks:
+      - peerprep_network
+    ports:
+      - '${PORT}:9003'
+    environment:
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: 'room_service_database'
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
+      DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      ROOM_EXPIRE_MILLIS: ${ROOM_EXPIRE_MILLIS}
+      PORT: 9003
+      NODE_ENV: ${NODE_ENV}
+    depends_on:
+      - room_service_database
+    restart: unless-stopped
+
+networks:
+  peerprep_network:
+    name: peerprep
+    external: true
