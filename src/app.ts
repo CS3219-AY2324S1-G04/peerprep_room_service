@@ -18,19 +18,19 @@ export default class App {
   /**
    * Setup the app.
    * @param port - Port to listen on.
-   * @param client - Client for communicating with the database.
+   * @param databaseClient - Client for communicating with the database.
    * @param handlers - Handlers for handling API requests.
    * @param isDevEnv - True if the app is running in a development environment.
    */
   public constructor(
     port: number,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
     handlers: Handler[],
     isDevEnv: boolean,
   ) {
     this._app = express();
     this._port = port;
-    this._database = client;
+    this._database = databaseClient;
 
     this._setupMiddleman(isDevEnv);
     this._setupHandlers(handlers);
@@ -103,7 +103,7 @@ export default class App {
       req: express.Request,
       res: express.Response,
       next: express.NextFunction,
-      client: DatabaseClient,
+      databaseClient: DatabaseClient,
     ) => Promise<void>,
   ): (
     req: express.Request,

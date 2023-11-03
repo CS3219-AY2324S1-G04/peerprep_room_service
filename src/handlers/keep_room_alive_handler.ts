@@ -48,13 +48,13 @@ export default class KeepRoomAliveHandler extends Handler {
   }
 
   private static async _delayRoomExpiry(
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
     userId: UserId,
     roomExpireMillis: number,
   ): Promise<Date> {
     const newExpiry = new Date(Date.now() + roomExpireMillis);
 
-    if (!(await client.updateRoomExpiry(userId, newExpiry))) {
+    if (!(await databaseClient.updateRoomExpiry(userId, newExpiry))) {
       throw new HttpErrorInfo(404);
     }
 
@@ -65,14 +65,14 @@ export default class KeepRoomAliveHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const userId: UserId = KeepRoomAliveHandler._parseCookies(
       this._accessTokenVerifier,
       req.cookies,
     );
     const expiry: Date = await KeepRoomAliveHandler._delayRoomExpiry(
-      client,
+      databaseClient,
       userId,
       this._roomExpireMillis,
     );

@@ -30,10 +30,11 @@ export default class GetRoomByIdHandler extends Handler {
   }
 
   private static async _fetchRoom(
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
     roomId: RoomId,
   ): Promise<Room> {
-    const room: Room | undefined = await client.fetchRoomFromRoomId(roomId);
+    const room: Room | undefined =
+      await databaseClient.fetchRoomFromRoomId(roomId);
 
     if (room === undefined) {
       throw new HttpErrorInfo(404);
@@ -46,10 +47,13 @@ export default class GetRoomByIdHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const roomId: RoomId = GetRoomByIdHandler._parseParams(req.params);
-    const room: Room = await GetRoomByIdHandler._fetchRoom(client, roomId);
+    const room: Room = await GetRoomByIdHandler._fetchRoom(
+      databaseClient,
+      roomId,
+    );
 
     res.status(200).send(createJsonCompatibleRoom(room));
   }

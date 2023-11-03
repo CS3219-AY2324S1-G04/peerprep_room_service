@@ -59,10 +59,10 @@ export default class CreateRoomHandler extends Handler {
   }
 
   private static async _ensureUsersNotInRoom(
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
     userIds: UserId[],
   ): Promise<void> {
-    if (await client.areAnyUsersInRoom(userIds)) {
+    if (await databaseClient.areAnyUsersInRoom(userIds)) {
       throw new HttpErrorInfo(
         400,
         JSON.stringify({
@@ -73,7 +73,7 @@ export default class CreateRoomHandler extends Handler {
   }
 
   private static async _createRoom(
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
     room: ClientSpecifiedRoom,
     roomExpireMillis: number,
   ): Promise<RoomId> {
@@ -84,14 +84,14 @@ export default class CreateRoomHandler extends Handler {
       roomId = RoomId.create();
 
       try {
-        await client.createRoom({
+        await databaseClient.createRoom({
           roomId: roomId,
           userIds: room.userIds,
           questionId: room.questionId,
           roomExpiry: new Date(Date.now() + roomExpireMillis),
         });
       } catch (e) {
-        if (!client.isUniqueConstraintViolated(e)) {
+        if (!databaseClient.isUniqueConstraintViolated(e)) {
           throw e;
         }
       }
@@ -106,13 +106,13 @@ export default class CreateRoomHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const room: ClientSpecifiedRoom = CreateRoomHandler._parseBody(req.body);
 
-    await CreateRoomHandler._ensureUsersNotInRoom(client, room.userIds);
+    await CreateRoomHandler._ensureUsersNotInRoom(databaseClient, room.userIds);
     const roomId: RoomId = await CreateRoomHandler._createRoom(
-      client,
+      databaseClient,
       room,
       this._roomExpireMillis,
     );

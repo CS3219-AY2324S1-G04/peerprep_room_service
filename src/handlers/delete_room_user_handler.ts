@@ -40,8 +40,11 @@ export default class DeleteRoomUserHandler extends Handler {
     return UserId.parseNumber(userProfile.userId);
   }
 
-  private static async _removeRoomUser(client: DatabaseClient, userId: UserId) {
-    if (!(await client.removeRoomUser(userId))) {
+  private static async _removeRoomUser(
+    databaseClient: DatabaseClient,
+    userId: UserId,
+  ) {
+    if (!(await databaseClient.removeRoomUser(userId))) {
       throw new HttpErrorInfo(404);
     }
   }
@@ -50,13 +53,13 @@ export default class DeleteRoomUserHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const userId: UserId = DeleteRoomUserHandler._parseCookies(
       this._accessTokenVerifier,
       req.cookies,
     );
-    await DeleteRoomUserHandler._removeRoomUser(client, userId);
+    await DeleteRoomUserHandler._removeRoomUser(databaseClient, userId);
 
     res.sendStatus(200);
   }

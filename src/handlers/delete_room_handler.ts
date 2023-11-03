@@ -28,8 +28,11 @@ export default class DeleteRoomHandler extends Handler {
     }
   }
 
-  private static async _deleteRoom(client: DatabaseClient, roomId: RoomId) {
-    if (!(await client.deleteRoom(roomId))) {
+  private static async _deleteRoom(
+    databaseClient: DatabaseClient,
+    roomId: RoomId,
+  ) {
+    if (!(await databaseClient.deleteRoom(roomId))) {
       throw new HttpErrorInfo(404);
     }
   }
@@ -38,10 +41,10 @@ export default class DeleteRoomHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const roomId: RoomId = DeleteRoomHandler._parseParams(req.params);
-    await DeleteRoomHandler._deleteRoom(client, roomId);
+    await DeleteRoomHandler._deleteRoom(databaseClient, roomId);
 
     res.sendStatus(200);
   }

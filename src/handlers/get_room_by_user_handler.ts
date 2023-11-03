@@ -42,8 +42,12 @@ export default class GetRoomByUserHandler extends Handler {
     return UserId.parseNumber(userProfile.userId);
   }
 
-  private static async _fetchRoom(client: DatabaseClient, userId: UserId) {
-    const room: Room | undefined = await client.fetchRoomFromUserId(userId);
+  private static async _fetchRoom(
+    databaseClient: DatabaseClient,
+    userId: UserId,
+  ) {
+    const room: Room | undefined =
+      await databaseClient.fetchRoomFromUserId(userId);
 
     if (room === undefined) {
       throw new HttpErrorInfo(404);
@@ -56,13 +60,16 @@ export default class GetRoomByUserHandler extends Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     const userId: UserId = GetRoomByUserHandler._parseCookies(
       this._accessTokenVerifier,
       req.cookies,
     );
-    const room: Room = await GetRoomByUserHandler._fetchRoom(client, userId);
+    const room: Room = await GetRoomByUserHandler._fetchRoom(
+      databaseClient,
+      userId,
+    );
 
     res.status(200).send(createJsonCompatibleRoom(room));
   }

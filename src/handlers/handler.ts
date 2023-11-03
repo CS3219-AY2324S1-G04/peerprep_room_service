@@ -23,16 +23,16 @@ export default abstract class Handler {
    * @param req - Information about the request.
    * @param res - For creating and sending the response.
    * @param next - Called to let the next handler (if any) handle the request.
-   * @param client - Client for communicating with the database.
+   * @param databaseClient - Client for communicating with the database.
    */
   public async handle(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void> {
     try {
-      await this.handleLogic(req, res, next, client);
+      await this.handleLogic(req, res, next, databaseClient);
     } catch (e) {
       if (e instanceof HttpErrorInfo) {
         res.status(e.statusCode).send(e.message);
@@ -50,7 +50,7 @@ export default abstract class Handler {
    * @param req - Information about the request.
    * @param res - For creating and sending the response.
    * @param next - Called to let the next handler (if any) handle the request.
-   * @param client - Client for communicating with the database.
+   * @param databaseClient - Client for communicating with the database.
    * @returns Content to be use as the HTTP response body.
    * @throws {HttpErrorInfo} Error encountered that requires a HTTP error
    * response to be sent.
@@ -59,7 +59,7 @@ export default abstract class Handler {
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
-    client: DatabaseClient,
+    databaseClient: DatabaseClient,
   ): Promise<void>;
 }
 

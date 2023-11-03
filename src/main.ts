@@ -18,7 +18,7 @@ import UserService from './services/user_service';
 async function run(): Promise<void> {
   const databaseClientConfig: DatabaseClientConfig = new DatabaseClientConfig();
   const apiConfig: ApiConfig = new ApiConfig();
-  const client: DatabaseClient = new PostgresDatabaseClient({
+  const databaseClient: DatabaseClient = new PostgresDatabaseClient({
     password: databaseClientConfig.password,
     user: databaseClientConfig.user,
     host: databaseClientConfig.host,
@@ -37,7 +37,7 @@ async function run(): Promise<void> {
 
   const app: App = new App(
     apiConfig.port,
-    client,
+    databaseClient,
     [
       new CreateRoomHandler(apiConfig.roomExpireMillis),
       new GetRoomByIdHandler(),
@@ -49,7 +49,7 @@ async function run(): Promise<void> {
     apiConfig.isDevEnv,
   );
 
-  await client.initialise();
+  await databaseClient.initialise();
   app.start();
 }
 
