@@ -13,7 +13,7 @@ export default class DatabaseClientConfig {
   public static readonly maxClientCountEnvVar: string =
     'DATABASE_MAX_CLIENT_COUNT';
 
-  public static readonly defaultUser: string = 'postgres';
+  public static readonly defaultUser: string = 'user';
   public static readonly defaultHost: string = 'localhost';
   public static readonly defaultPort: number = 5432;
   public static readonly defaultName: string = 'room';
