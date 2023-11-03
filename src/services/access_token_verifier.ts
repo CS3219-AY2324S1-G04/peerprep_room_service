@@ -1,7 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-import { UserProfile } from './user_service';
-
 export default class AccessTokenVerifier {
   private static _userIdKey: string = 'user-id';
   private static _userRoleKey: string = 'user-role';
@@ -30,4 +28,11 @@ export default class AccessTokenVerifier {
       emailAddress: payload[AccessTokenVerifier._emailAddressKey],
     };
   }
+}
+
+export interface UserProfile {
+  userId: number;
+  userRole: string;
+  username: string;
+  emailAddress: string;
 }

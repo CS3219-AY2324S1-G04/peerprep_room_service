@@ -11,10 +11,3 @@ export default class UserService {
     return (await axios.get(`${this._baseUrl}/access-token-public-key`)).data;
   }
 }
-
-export interface UserProfile {
-  userId: number;
-  userRole: string;
-  username: string;
-  emailAddress: string;
-}
