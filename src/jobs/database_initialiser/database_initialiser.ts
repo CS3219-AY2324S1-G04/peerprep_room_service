@@ -20,24 +20,35 @@ const databaseClient: DatabaseClient = new PostgresDatabaseClient({
   maxClientCount: databaseClientConfig.maxClientCount,
 });
 
-databaseClient.initialise().then(async () => {
+async function initialise(): Promise<void> {
+  await databaseClient.initialise();
+
   if (await databaseClient.doEntitiesExist()) {
     console.log('One or more entities to be created already exist.');
 
-    if (databaseInitialiserConfig.shouldForceInitialisation) {
-      console.log('Deleting existing entities ...');
-      await databaseClient.deleteEntities();
-      console.log('Deleted existing entities!');
-    } else {
+    if (!databaseInitialiserConfig.shouldForceInitialisation) {
       console.log('Initialisation aborted!');
       await databaseClient.disconnect();
       return;
     }
+
+    await deleteExistingEntities();
   }
 
+  await createEntities();
+  await databaseClient.disconnect();
+}
+
+async function deleteExistingEntities(): Promise<void> {
+  console.log('Deleting existing entities ...');
+  await databaseClient.deleteEntities();
+  console.log('Deleted existing entities!');
+}
+
+async function createEntities(): Promise<void> {
   console.log('Creating entities ...');
   await databaseClient.synchronise();
   console.log('Created entities!');
+}
 
-  await databaseClient.disconnect();
-});
+initialise();
