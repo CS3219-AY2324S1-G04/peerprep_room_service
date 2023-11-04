@@ -40,6 +40,32 @@ services:
       - room_service_database
     restart: on-failure
 
+  room_service_expired_room_deleter:
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
+    build:
+      context: .
+      dockerfile: ./dockerfiles/expired_room_deleter.dockerfile
+    networks:
+      - peerprep_network
+    environment:
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: 'room_service_database'
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
+      DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: 'room_service_mq'
+      MQ_PORT: 5672
+      MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
+      ROOM_DELETION_INTERVAL_MILLIS: ${ROOM_DELETION_INTERVAL_MILLIS}
+    depends_on:
+      - room_service_database
+      - room_service_mq
+    restart: unless-stopped
+
   room_service_api:
     image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api
     build:
@@ -69,6 +95,7 @@ services:
       NODE_ENV: ${NODE_ENV}
     depends_on:
       - room_service_database
+      - room_service_mq
     restart: unless-stopped
 
 networks:

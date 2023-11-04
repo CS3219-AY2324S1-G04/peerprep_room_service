@@ -10,15 +10,9 @@ const databaseClientConfig: DatabaseClientConfig = new DatabaseClientConfig();
 const databaseInitialiserConfig: DatabaseInitialiserConfig =
   new DatabaseInitialiserConfig();
 
-const databaseClient: DatabaseClient = new PostgresDatabaseClient({
-  password: databaseClientConfig.password,
-  user: databaseClientConfig.user,
-  host: databaseClientConfig.host,
-  port: databaseClientConfig.port,
-  databaseName: databaseClientConfig.databaseName,
-  connectionTimeoutMillis: databaseClientConfig.connectionTimeoutMillis,
-  maxClientCount: databaseClientConfig.maxClientCount,
-});
+const databaseClient: DatabaseClient = new PostgresDatabaseClient(
+  databaseClientConfig,
+);
 
 async function initialise(): Promise<void> {
   await databaseClient.initialise();

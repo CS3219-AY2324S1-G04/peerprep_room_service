@@ -1,4 +1,9 @@
-import { ArrayContains, ArrayOverlap, DataSource } from 'typeorm';
+import {
+  ArrayContains,
+  ArrayOverlap,
+  DataSource,
+  LessThanOrEqual,
+} from 'typeorm';
 
 import DatabaseClientConfig from '../configs/database_client_config';
 import QuestionId from '../data_structs/question_id';
@@ -105,6 +110,23 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     };
   }
 
+  public async fetchExpiredRooms(): Promise<Room[]> {
+    const rooms: RoomEntity[] = await this._dataSource
+      .getRepository(RoomEntity)
+      .find({
+        where: { roomExpiry: LessThanOrEqual(new Date()) },
+      });
+
+    return rooms.map((entity) => {
+      return {
+        roomId: RoomId.parse(entity.roomId),
+        userIds: UserId.parseMultipleNumbers(entity.userIds),
+        questionId: QuestionId.parse(entity.questionId),
+        roomExpiry: entity.roomExpiry,
+      };
+    });
+  }
+
   public async createRoom(room: Room): Promise<void> {
     await this._dataSource.getRepository(RoomEntity).insert({
       roomId: room.roomId.toString(),
@@ -164,6 +186,16 @@ export default class PostgresDatabaseClient implements DatabaseClient {
         await this._dataSource
           .getRepository(RoomEntity)
           .delete(roomId.toString())
+      ).affected ?? 0) > 0
+    );
+  }
+
+  public async deleteRooms(roomIds: RoomId[]): Promise<boolean> {
+    return (
+      ((
+        await this._dataSource
+          .getRepository(RoomEntity)
+          .delete(roomIds.map((id) => id.toString()))
       ).affected ?? 0) > 0
     );
   }

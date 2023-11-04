@@ -30,8 +30,10 @@ export default interface DatabaseClient {
 
   fetchRoomFromUserId(userId: UserId): Promise<Room | undefined>;
 
+  fetchExpiredRooms(): Promise<Room[]>;
+
   /**
-   *aCreates a room using information in {@link room}.
+   * Creates a room using information in {@link room}.
    * @param room - Information about the room.
    */
   createRoom(room: Room): Promise<void>;
@@ -41,6 +43,8 @@ export default interface DatabaseClient {
   removeRoomUser(userId: UserId): Promise<boolean>;
 
   deleteRoom(roomId: RoomId): Promise<boolean>;
+
+  deleteRooms(roomIds: RoomId[]): Promise<boolean>;
 
   /**
    * @param err - The error to check.

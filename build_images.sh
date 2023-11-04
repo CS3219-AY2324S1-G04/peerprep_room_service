@@ -3,6 +3,8 @@
 ### Constants ###
 api_image_name="peerprep_room_service_api"
 database_initialiser_image_name="peerprep_room_service_database_initialiser"
+expired_room_deleter_image_name="peerprep_room_service_expired_room_deleter"
+
 export_dir="./docker_build"
 
 cr="ghcr.io/cs3219-ay2324s1-g04/"
@@ -16,7 +18,7 @@ Arguments:\n
 -h\t\t     Prints the help message.\n
 -e\t\t     Enables exporting the images to the directory \"${export_dir}\".\n
 -p\t\t     Enables pushing to the container registry after building.\n
--i IMAGE\t Specifies the image to build and push. Value can be \"api\" or \"database_initialiser\". This argument can be specified multiple times to include multiple images.\n
+-i IMAGE\t Specifies the image to build and push. Value can be \"api\", \"database_initialiser\", or \"expired_room_deleter\". This argument can be specified multiple times to include multiple images.\n
 -t TAG\t\t Tags the images built with \"TAG\".
 "
 
@@ -73,6 +75,7 @@ push() {
 ### Parse CLI Arguments ###
 should_build_api=0
 should_build_database_initaliser=0
+should_build_expired_room_deleter=0
 should_export=0
 should_push=0
 
@@ -99,6 +102,9 @@ do
         database_initialiser)
           should_build_database_initaliser=1
           ;;
+        expired_room_deleter)
+          expired_room_deleter=1
+          ;;
       esac
       ;;
     t)
@@ -106,13 +112,15 @@ do
   esac
 done
 
-if [[ $should_build_api == 0 && $should_build_database_initaliser == 0 ]]; then
+if [[ $should_build_api == 0 && $should_build_database_initaliser == 0 && $should_build_expired_room_deleter == 0 ]]; then
   should_build_api=1
   should_build_database_initaliser=1
+  should_build_expired_room_deleter=1
 fi
 
 api_image_full_name=${cr}${api_image_name}${image_tag}
-database_initialiser_full_name=${cr}${database_initialiser_image_name}${image_tag}
+database_initialiser_image_full_name=${cr}${database_initialiser_image_name}${image_tag}
+expired_room_deleter_image_full_name=${cr}${expired_room_deleter_image_name}${image_tag}
 
 ### Transpile Typescript ###
 echo "Transpiling Typescript ..."
@@ -132,7 +140,11 @@ if [[ $should_build_api == 1 ]]; then
 fi
 
 if [[ $should_build_database_initaliser == 1 ]]; then
-  build_image "dockerfiles/database_initialiser.dockerfile" $database_initialiser_full_name
+  build_image "dockerfiles/database_initialiser.dockerfile" $database_initialiser_image_full_name
+fi
+
+if [[ $should_build_expired_room_deleter == 1 ]]; then
+  build_image "dockerfiles/expired_room_deleter.dockerfile" $expired_room_deleter_image_full_name
 fi
 
 ### Push Images to the Container Registry ###
@@ -145,5 +157,9 @@ if [[ $should_build_api == 1 ]]; then
 fi
 
 if [[ $should_build_database_initaliser == 1 ]]; then
-  push $database_initialiser_full_name
+  push $database_initialiser_image_full_name
+fi
+
+if [[ $should_build_expired_room_deleter == 1 ]]; then
+  push $expired_room_deleter_image_full_name
 fi
