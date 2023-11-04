@@ -4,9 +4,20 @@ services:
     networks:
       - peerprep_network
     environment:
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+    restart: unless-stopped
+
+  room_service_mq:
+    image: rabbitmq:3.12
+    networks:
+      - peerprep_network
+    ports:
+      - ${MQ_EXPOSED_PORT}:5672
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD}
     restart: unless-stopped
 
   room_service_database_initialiser:
@@ -37,7 +48,7 @@ services:
     networks:
       - peerprep_network
     ports:
-      - '${PORT}:9003'
+      - '${API_EXPOSED_PORT}:9003'
     environment:
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
@@ -46,6 +57,11 @@ services:
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
       DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: 'room_service_mq'
+      MQ_PORT: 5672
+      MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
       USER_SERVICE_HOST: ${USER_SERVICE_HOST}
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
       ROOM_EXPIRE_MILLIS: ${ROOM_EXPIRE_MILLIS}
