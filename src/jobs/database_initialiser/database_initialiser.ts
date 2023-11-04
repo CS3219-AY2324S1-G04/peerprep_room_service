@@ -3,7 +3,7 @@
  */
 import DatabaseClientConfig from '../../configs/database_client_config';
 import DatabaseClient from '../../services/database_client';
-import { PostgresDatabaseClient } from '../../services/postgres_database_client';
+import PostgresDatabaseClient from '../../services/postgres_database_client';
 import DatabaseInitialiserConfig from './database_initialiser_config';
 
 const databaseClientConfig: DatabaseClientConfig = new DatabaseClientConfig();

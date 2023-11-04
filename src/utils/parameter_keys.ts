@@ -1,6 +1,6 @@
 export const accessTokenKey: string = 'access-token';
 export const roomIdKey: string = 'room-id';
-export const userIdsKey: string = 'users';
+export const userIdsKey: string = 'user-ids';
 export const questionIdKey: string = 'question-id';
 export const roomExpiryKey: string = 'expire-at';
 

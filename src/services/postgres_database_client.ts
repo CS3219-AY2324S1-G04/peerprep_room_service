@@ -8,8 +8,8 @@ import UserId from '../data_structs/user_id';
 import RoomEntity from '../entities/room';
 import DatabaseClient from './database_client';
 
-export class PostgresDatabaseClient implements DatabaseClient {
-  private _dataSource: DataSource;
+export default class PostgresDatabaseClient implements DatabaseClient {
+  private readonly _dataSource: DataSource;
 
   /**
    * @param config - Configs for the database client.

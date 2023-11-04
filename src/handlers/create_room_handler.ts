@@ -4,9 +4,11 @@ import ClientSpecifiedRoom from '../data_structs/client_specified_room';
 import DecodedJson, { DecodedJsonObject } from '../data_structs/decoded_json';
 import HttpErrorInfo from '../data_structs/http_error_info';
 import QuestionId from '../data_structs/question_id';
+import Room from '../data_structs/room';
 import RoomId from '../data_structs/room_id';
 import UserId from '../data_structs/user_id';
 import DatabaseClient from '../services/database_client';
+import MqClient from '../services/mq_client';
 import { questionIdKey, roomIdKey, userIdsKey } from '../utils/parameter_keys';
 import Handler, { HttpMethod } from './handler';
 
@@ -76,20 +78,20 @@ export default class CreateRoomHandler extends Handler {
     databaseClient: DatabaseClient,
     room: ClientSpecifiedRoom,
     roomExpireMillis: number,
-  ): Promise<RoomId> {
-    let roomId: RoomId | undefined;
+  ): Promise<Room> {
+    let completeRoom: Room | undefined;
 
     let isEntryCreated: boolean = false;
     while (!isEntryCreated) {
-      roomId = RoomId.create();
+      completeRoom = {
+        roomId: RoomId.create(),
+        userIds: room.userIds,
+        questionId: room.questionId,
+        roomExpiry: new Date(Date.now() + roomExpireMillis),
+      };
 
       try {
-        await databaseClient.createRoom({
-          roomId: roomId,
-          userIds: room.userIds,
-          questionId: room.questionId,
-          roomExpiry: new Date(Date.now() + roomExpireMillis),
-        });
+        await databaseClient.createRoom(completeRoom);
       } catch (e) {
         if (!databaseClient.isUniqueConstraintViolated(e)) {
           throw e;
@@ -99,7 +101,7 @@ export default class CreateRoomHandler extends Handler {
       isEntryCreated = true;
     }
 
-    return roomId!;
+    return completeRoom!;
   }
 
   public override async handleLogic(
@@ -107,16 +109,21 @@ export default class CreateRoomHandler extends Handler {
     res: express.Response,
     next: express.NextFunction,
     databaseClient: DatabaseClient,
+    mqClient: MqClient,
   ): Promise<void> {
     const room: ClientSpecifiedRoom = CreateRoomHandler._parseBody(req.body);
 
     await CreateRoomHandler._ensureUsersNotInRoom(databaseClient, room.userIds);
-    const roomId: RoomId = await CreateRoomHandler._createRoom(
+    const completeRoom: Room = await CreateRoomHandler._createRoom(
       databaseClient,
       room,
       this._roomExpireMillis,
     );
 
-    res.status(201).send(JSON.stringify({ [roomIdKey]: roomId.toString() }));
+    await mqClient.publishCreateRoomEvent(completeRoom);
+
+    res
+      .status(201)
+      .send(JSON.stringify({ [roomIdKey]: completeRoom.roomId.toString() }));
   }
 }

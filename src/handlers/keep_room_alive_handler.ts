@@ -2,9 +2,10 @@ import express from 'express';
 
 import HttpErrorInfo from '../data_structs/http_error_info';
 import UserId from '../data_structs/user_id';
-import AccessTokenVerifier from '../services/access_token_verifier';
+import AccessTokenVerifier, {
+  UserProfile,
+} from '../services/access_token_verifier';
 import DatabaseClient from '../services/database_client';
-import { UserProfile } from '../services/user_service';
 import { accessTokenKey, roomExpiryKey } from '../utils/parameter_keys';
 import Handler, { HttpMethod } from './handler';
 

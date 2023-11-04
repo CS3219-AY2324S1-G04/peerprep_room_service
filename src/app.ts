@@ -8,29 +8,34 @@ import express from 'express';
 
 import Handler, { HttpMethod } from './handlers/handler';
 import DatabaseClient from './services/database_client';
+import MqClient from './services/mq_client';
 
 /** Represents the app. */
 export default class App {
   private readonly _app: express.Application;
   private readonly _port: number;
-  private readonly _database: DatabaseClient;
+  private readonly _databaseClient: DatabaseClient;
+  private readonly _mqClient: MqClient;
 
   /**
    * Setup the app.
    * @param port - Port to listen on.
    * @param databaseClient - Client for communicating with the database.
+   * @param mqClient - Client for communicating with the message queue.
    * @param handlers - Handlers for handling API requests.
    * @param isDevEnv - True if the app is running in a development environment.
    */
   public constructor(
     port: number,
     databaseClient: DatabaseClient,
+    mqClient: MqClient,
     handlers: Handler[],
     isDevEnv: boolean,
   ) {
     this._app = express();
     this._port = port;
-    this._database = databaseClient;
+    this._databaseClient = databaseClient;
+    this._mqClient = mqClient;
 
     this._setupMiddleman(isDevEnv);
     this._setupHandlers(handlers);
@@ -104,6 +109,7 @@ export default class App {
       res: express.Response,
       next: express.NextFunction,
       databaseClient: DatabaseClient,
+      mqClient: MqClient,
     ) => Promise<void>,
   ): (
     req: express.Request,
@@ -115,7 +121,7 @@ export default class App {
       res: express.Response,
       next: express.NextFunction,
     ) => {
-      await handle(req, res, next, this._database);
+      await handle(req, res, next, this._databaseClient, this._mqClient);
     };
   }
 }

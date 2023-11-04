@@ -5,6 +5,7 @@ import express from 'express';
 
 import HttpErrorInfo from '../data_structs/http_error_info';
 import DatabaseClient from '../services/database_client';
+import MqClient from '../services/mq_client';
 
 /** Handler of a HTTP route. */
 export default abstract class Handler {
@@ -24,15 +25,17 @@ export default abstract class Handler {
    * @param res - For creating and sending the response.
    * @param next - Called to let the next handler (if any) handle the request.
    * @param databaseClient - Client for communicating with the database.
+   * @param mqClient - Client for communicating with the message queue.
    */
   public async handle(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
     databaseClient: DatabaseClient,
+    mqClient: MqClient,
   ): Promise<void> {
     try {
-      await this.handleLogic(req, res, next, databaseClient);
+      await this.handleLogic(req, res, next, databaseClient, mqClient);
     } catch (e) {
       if (e instanceof HttpErrorInfo) {
         res.status(e.statusCode).send(e.message);
@@ -51,6 +54,7 @@ export default abstract class Handler {
    * @param res - For creating and sending the response.
    * @param next - Called to let the next handler (if any) handle the request.
    * @param databaseClient - Client for communicating with the database.
+   * @param mqClient - Client for communicating with the message queue.
    * @returns Content to be use as the HTTP response body.
    * @throws {HttpErrorInfo} Error encountered that requires a HTTP error
    * response to be sent.
@@ -60,6 +64,7 @@ export default abstract class Handler {
     res: express.Response,
     next: express.NextFunction,
     databaseClient: DatabaseClient,
+    mqClient: MqClient,
   ): Promise<void>;
 }
 
