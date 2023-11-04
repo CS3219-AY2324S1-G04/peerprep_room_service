@@ -10,29 +10,31 @@ import MqClient, {
 } from './mq_client';
 
 export default class AmqpMqClient implements MqClient {
-  private readonly _connectionPromise: Promise<amqp.Connection>;
+  private readonly _setupPromise: Promise<void>;
   private readonly _exchangeName: string;
 
   private _connection: amqp.Connection | undefined;
   private _channel: amqp.Channel | undefined;
 
   public constructor(config: MqClientConfig) {
-    this._connectionPromise = amqp.connect(
-      `amqp://${encodeURIComponent(config.user)}:${encodeURIComponent(
-        config.password,
-      )}@${config.host}:${config.port}`,
-    );
+    const url: string = `amqp://${encodeURIComponent(
+      config.user,
+    )}:${encodeURIComponent(config.password)}@${config.host}:${config.port}`;
+
+    this._setupPromise = amqp.connect(url).then(async (connection) => {
+      this._connection = connection;
+      this._channel = await this._connection.createChannel();
+
+      await this._channel.assertExchange(this._exchangeName, 'fanout', {
+        durable: true,
+      });
+    });
 
     this._exchangeName = config.exchangeName;
   }
 
   public async initialise(): Promise<void> {
-    this._connection = await this._connectionPromise;
-    this._channel = await this._connection.createChannel();
-
-    await this._channel.assertExchange(this._exchangeName, 'fanout', {
-      durable: true,
-    });
+    await this._setupPromise;
   }
 
   public async disconnect(): Promise<void> {
