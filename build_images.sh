@@ -1,0 +1,165 @@
+#!/bin/bash
+
+### Constants ###
+api_image_name="peerprep_room_service_api"
+database_initialiser_image_name="peerprep_room_service_database_initialiser"
+expired_room_deleter_image_name="peerprep_room_service_expired_room_deleter"
+
+export_dir="./docker_build"
+
+cr="ghcr.io/cs3219-ay2324s1-g04/"
+
+instructions="\n
+Usage: build_images.sh [-h] [-e] [-p] [-i IMAGE] [-t TAG]\n
+\n
+This script builds Docker images, exports them to \"./docker_build\", then pushes them to the container registry. The default configuration builds all images and does not push them to the container registry. Arguments can be specified to change the script behaviour.\n
+\n
+Arguments:\n
+-h\t\t     Prints the help message.\n
+-e\t\t     Enables exporting the images to the directory \"${export_dir}\".\n
+-p\t\t     Enables pushing to the container registry after building.\n
+-i IMAGE\t Specifies the image to build and push. Value can be \"api\", \"database_initialiser\", or \"expired_room_deleter\". This argument can be specified multiple times to include multiple images.\n
+-t TAG\t\t Tags the images built with \"TAG\".
+"
+
+### Functions ###
+build_image () {
+  dockerfile=$1
+  image_name=$2
+
+  export_file="$export_dir/$2.tar"
+
+  echo "Building $image_name ..."
+
+  docker image build . --tag=$image_name --file $dockerfile
+
+  if [[ $? -ne 0 ]]; then
+    echo "Build failed."
+    exit 1
+  fi
+
+  echo "Build successful."
+
+  if [[ $should_export == 0 ]]; then
+    return 0
+  fi
+
+  echo "Exporting image ..."
+
+  mkdir -p $(dirname $export_file)
+  docker image save --output=$export_file $image_name
+
+  if [[ $? -ne 0 ]]; then
+    echo "Export failed."
+    exit 1
+  fi
+
+  echo "Exported image to $export_file"
+}
+
+push() {
+  image_name=$1
+
+  echo "Pushing $image_name to the container registry ..."
+
+  docker image push $image_name
+
+  if [[ $? -ne 0 ]]; then
+    echo "Push failed."
+    exit 1
+  fi
+
+  echo "Push successful."
+}
+
+### Parse CLI Arguments ###
+should_build_api=0
+should_build_database_initaliser=0
+should_build_expired_room_deleter=0
+should_export=0
+should_push=0
+
+image_tag=":latest"
+
+while getopts hepi:t: flag
+do
+  case "${flag}" in
+    h)
+      echo -e $instructions
+      exit 0
+      ;;
+    e)
+      should_export=1
+      ;;
+    p)
+      should_push=1
+      ;;
+    i)
+      case ${OPTARG} in
+        api)
+          should_build_api=1
+          ;;
+        database_initialiser)
+          should_build_database_initaliser=1
+          ;;
+        expired_room_deleter)
+          expired_room_deleter=1
+          ;;
+      esac
+      ;;
+    t)
+      image_tag=":$OPTARG"
+  esac
+done
+
+if [[ $should_build_api == 0 && $should_build_database_initaliser == 0 && $should_build_expired_room_deleter == 0 ]]; then
+  should_build_api=1
+  should_build_database_initaliser=1
+  should_build_expired_room_deleter=1
+fi
+
+api_image_full_name=${cr}${api_image_name}${image_tag}
+database_initialiser_image_full_name=${cr}${database_initialiser_image_name}${image_tag}
+expired_room_deleter_image_full_name=${cr}${expired_room_deleter_image_name}${image_tag}
+
+### Transpile Typescript ###
+echo "Transpiling Typescript ..."
+
+npm run build
+
+if [[ $? -ne 0 ]]; then
+  echo "Transpile failed."
+  exit 1
+fi
+
+echo "Transpile successful."
+
+### Build Images ###
+if [[ $should_build_api == 1 ]]; then
+  build_image "dockerfiles/api.dockerfile" $api_image_full_name
+fi
+
+if [[ $should_build_database_initaliser == 1 ]]; then
+  build_image "dockerfiles/database_initialiser.dockerfile" $database_initialiser_image_full_name
+fi
+
+if [[ $should_build_expired_room_deleter == 1 ]]; then
+  build_image "dockerfiles/expired_room_deleter.dockerfile" $expired_room_deleter_image_full_name
+fi
+
+### Push Images to the Container Registry ###
+if [[ $should_push == 0 ]]; then
+  exit 0
+fi
+
+if [[ $should_build_api == 1 ]]; then
+  push $api_image_full_name
+fi
+
+if [[ $should_build_database_initaliser == 1 ]]; then
+  push $database_initialiser_image_full_name
+fi
+
+if [[ $should_build_expired_room_deleter == 1 ]]; then
+  push $expired_room_deleter_image_full_name
+fi
