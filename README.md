@@ -16,6 +16,10 @@ Handles the storing and retrieving of room information.
   - [Extend a Lifespan of a Room](#extend-a-lifespan-of-a-room)
   - [Remove a User from a Room](#remove-a-user-from-a-room)
   - [Delete a Room](#delete-a-room)
+- [MQ Events](#mq-events)
+  - [Create Room](#create-room)
+  - [Delete Room](#delete-room)
+  - [Remove User from Room](#remove-user-from-room)
 
 ## Quickstart Guide
 
@@ -249,3 +253,75 @@ WARNING: This endpoint is only available during development. It will not be acce
     ```
 - `404` - No room was found that has the specified room ID.
 - `500` - Unexpected error occurred on the server.
+
+## MQ Events
+
+Room Service utilises an MQ that support AMQP. Events are published to a fanout exchange which services may bind queues to in order to obtain information about changes made to a room.
+
+Each event message uses the JSON format. The message contains an `event-type` field which describes the type of event and additional fields which stores information about said event.
+
+This section describes these events.
+
+### Create Room
+
+> `create`
+
+Published when a room is created.
+
+The message contains the information about the room that was created.
+
+**Example:**
+
+```json
+{
+  "event-type": "create",
+  "room": {
+    "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
+    "user-ids": [1, 2],
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+  }
+}
+```
+
+### Delete Room
+
+> `delete`
+
+Published when a room is deleted.
+
+The message contains the information about the room that was deleted.
+
+**Example:**
+
+```json
+{
+  "event-type": "delete",
+  "room": {
+    "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
+    "user-ids": [2],
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+  }
+}
+```
+
+### Remove User from Room
+
+> `remove-user`
+
+Published when a user leaves a room.
+
+The message contains the information about the updated room as well as the user ID of the user that was removed.
+
+**Example:**
+
+```json
+{
+  "event-type": "remove-user",
+  "room": {
+    "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
+    "user-ids": [2],
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+  },
+  "removed-user-id": 1
+}
+```
