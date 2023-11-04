@@ -23,13 +23,11 @@ export default class KeepRoomAliveHandler extends Handler {
   }
 
   public override get method(): HttpMethod {
-    // TODO: Change to HttpMethod.patch;
-    return HttpMethod.put;
+    return HttpMethod.patch;
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'rooms/:rid'
-    return 'room/user/keep-alive';
+    return 'room/keep-alive';
   }
 
   private static _parseCookies(

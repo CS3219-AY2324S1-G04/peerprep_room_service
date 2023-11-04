@@ -23,8 +23,7 @@ export default class GetRoomByUserHandler extends Handler {
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'room'
-    return 'room/user';
+    return 'room';
   }
 
   private static _parseCookies(

@@ -14,8 +14,7 @@ export default class GetRoomByIdHandler extends Handler {
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'rooms/:{roomIdPathKey}'
-    return `room/:${roomIdPathKey}/info`;
+    return `rooms/:${roomIdPathKey}`;
   }
 
   private static _parseParams(pathParams: ParamsDictionary): RoomId {

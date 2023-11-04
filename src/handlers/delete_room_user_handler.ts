@@ -23,8 +23,7 @@ export default class DeleteRoomUserHandler extends Handler {
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'room/user'
-    return 'room/leave-room';
+    return 'room/user';
   }
 
   private static _parseCookies(

@@ -15,8 +15,7 @@ export default class DeleteRoomHandler extends Handler {
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'rooms/:rid'
-    return `room/:${roomIdPathKey}`;
+    return `rooms/:${roomIdPathKey}`;
   }
 
   private static _parseParams(pathParams: ParamsDictionary): RoomId {

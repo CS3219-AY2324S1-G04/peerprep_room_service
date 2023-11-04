@@ -13,7 +13,7 @@ Handles the storing and retrieving of room information.
   - [Create a Room](#create-a-room)
   - [Get a Room by Room ID](#get-a-room-by-room-id)
   - [Get a Room by User ID](#get-a-room-by-user-id)
-  - [Extend a Lifespan of a Room](#extend-a-lifespan-of-a-room)
+  - [Extend the Lifespan of a Room](#extend-the-lifespan-of-a-room)
   - [Remove a User from a Room](#remove-a-user-from-a-room)
   - [Delete a Room](#delete-a-room)
 - [MQ Events](#mq-events)
@@ -101,7 +101,7 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 
 ### Create a Room
 
-> [POST] `/room-service/create`
+> [POST] `/room-service/rooms`
 
 Creates a new room.
 
@@ -139,7 +139,7 @@ Example request body:
 
 ### Get a Room by Room ID
 
-> [GET] `/room-service/room/:room-id/info`
+> [GET] `/room-service/rooms/:room-id`
 
 Gets information about the room whose room ID was specified.
 
@@ -169,7 +169,7 @@ Gets information about the room whose room ID was specified.
 
 ### Get a Room by User ID
 
-> [GET] `/room-service/room/user`
+> [GET] `/room-service/room`
 
 Gets information about the room which contains the user who owns the specified access token.
 
@@ -193,9 +193,9 @@ Gets information about the room which contains the user who owns the specified a
 - `404` - User who owns the access token does not belong in any room.
 - `500` - Unexpected error occurred on the server.
 
-### Extend a Lifespan of a Room
+### Extend the Lifespan of a Room
 
-> [PUT] `/room-service/room/user/keep-alive`
+> [PATCH] `/room-service/room/keep-alive`
 
 Extends the lifespan of the room which contains the user who owns the specified access token.
 
@@ -216,7 +216,7 @@ Extends the lifespan of the room which contains the user who owns the specified 
 
 ### Remove a User from a Room
 
-> [DELETE] `/room-service/room/leave-room`
+> [DELETE] `/room-service/room/user`
 
 Removes the user who owns the specified access token from the room said user is in.
 
@@ -233,7 +233,7 @@ Removes the user who owns the specified access token from the room said user is 
 
 ### Delete a Room
 
-> [DELETE] `/room-service/room/:room-id`
+> [DELETE] `/room-service/rooms/:room-id`
 
 Deletes the room whose room ID was specified.
 

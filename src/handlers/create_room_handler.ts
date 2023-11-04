@@ -25,8 +25,7 @@ export default class CreateRoomHandler extends Handler {
   }
 
   public override get subPath(): string {
-    // TODO: Change this to 'rooms'
-    return 'create';
+    return 'rooms';
   }
 
   private static _parseBody(data: DecodedJson): ClientSpecifiedRoom {
