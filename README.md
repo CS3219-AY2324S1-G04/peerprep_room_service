@@ -5,7 +5,8 @@ Handles the storing and retrieving of room information.
 ## Table of Contents
 
 - [Quickstart Guide](#quickstart-guide)
-- [Environment Variables](#environment-variables)
+- [Build Script](#build-script)
+- [Docker Images](#docker-images)
   - [API](#api)
   - [Database Initialiser](#database-initialiser)
   - [Expired Room Deleter](#expired-room-deleter)
@@ -30,7 +31,15 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 3. Modify the ".env" file as per needed. Refer to [Docker Images](#docker-images) for the list of environment variables.
 4. Create the docker containers by running: `docker compose up`
 
-## Environment Variables
+## Build Script
+
+`build_images.sh` is a build script for building the Docker images and optionally pushing them to the container registry. To get more information about the script, run:
+
+```
+./build_images.sh -h
+```
+
+## Docker Images
 
 ### API
 
