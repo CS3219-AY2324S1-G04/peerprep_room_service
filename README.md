@@ -1,220 +1,251 @@
-# PeerPrep Matching Service
+# PeerPrep Room Service
 
-Handles the queuing and matching of users.
+Handles the storing and retrieving of room information.
+
+## Table of Contents
+
+- [Quickstart Guide](#quickstart-guide)
+- [Environment Variables](#environment-variables)
+  - [API](#api)
+  - [Database Initialiser](#database-initialiser)
+  - [Expired Room Deleter](#expired-room-deleter)
+- [REST API](#rest-api)
+  - [Create a Room](#create-a-room)
+  - [Get a Room by Room ID](#get-a-room-by-room-id)
+  - [Get a Room by User ID](#get-a-room-by-user-id)
+  - [Extend a Lifespan of a Room](#extend-a-lifespan-of-a-room)
+  - [Remove a User from a Room](#remove-a-user-from-a-room)
+  - [Delete a Room](#delete-a-room)
 
 ## Quickstart Guide
 
+Note that Room Service relies on User Service. Please ensure that User Service is up and running before attempting to start Room Service.
+
 1. Clone this repository.
-2. Modify the `.env` file as per needed. Refer to [Environment Variables](#environment-variables) for a list of configs.
-3. Build the docker images by running: `./run.sh`
-4. `peerprep_room_service_mongo_init` is meant to exit after sending some information to mongo. You may delete the instance after it has completed its execution. 
-5. For most functions, you will require user-service to be up.
+2. Build the docker images by running: `./build_images.sh`
+3. Modify the ".env" file as per needed. Refer to [Docker Images](#docker-images) for the list of environment variables.
+4. Create the docker containers by running: `docker compose up`
 
 ## Environment Variables
 
-### MONGO
+### API
 
-While it is possible to have the room-service share a mongo database with another service, it is not recommended. 
+**Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api
 
-- `RS_MONGO_USER` - Username of the Mongo database
-- `RS_MONGO_PASS` - Password of the Mongo database
-- `RS_MONGO_PORT` - Port of the Mongo database
-- `RS_MONGO_DB` - Name of the database.
+**Description:** This docker image contains the REST API.
 
-### APP
+**Environment Variables:**
 
-- `RS_EXPRESS_PORT` - Port of the Express server.
-- `RS_ROOM_EXPIRY` -  Suggested time in milliseconds (i.e. 5 * 60 * 1000 = 300000) for when the document should be deleted from MongoDB upon creation. This application uses MongoDB's expire-At to delete the collection, which means the actual time the item is deleted could be one 1 minute after the specified time. 
+- `DATABASE_USER` - User on the database host.
+- `DATABASE_PASSWORD` - Password of the database.
+- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
+- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_NAME` - Name of the database.
+- `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
+- `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
+- `MQ_USER` - User on the MQ host.
+- `MQ_PASSWORD` - Password of the MQ.
+- `MQ_HOST` - Address of the MQ host. (no need to specify if using "compose.yaml")
+- `MQ_PORT` - Port the MQ is listening on. (no need to specify if using "compose.yaml")
+- `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
+- `USER_SERVICE_HOST` - Address of the User Service host.
+- `USER_SERVICE_PORT` - Port the User Service is listening on.
+- `ROOM_EXPIRE_MILLIS` - Number of milliseconds a room can live for since the last expiry date and time extension.
+- `PORT` - Port to listen on. (no need to specify if using "compose.yaml")
+- `NODE_ENV` - Sets the mode the app is running in ("development" or "production")
+
+### Database Initialiser
+
+**Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_database_initialiser
+
+**Description:** This docker image initialises the database by creating the necessary entities.
+
+**Environment Variables:**
+
+- `DATABASE_USER` - User on the database host.
+- `DATABASE_PASSWORD` - Password of the database.
+- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
+- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_NAME` - Name of the database.
+- `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
+- `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
+- `SHOULD_FORCE_INITIALISATION` - Set to "true" if initialisation should be done even if entities already exist. Do not set to "true" in production as it might cause loss of data.
+
+### Expired Room Deleter
+
+**Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
+
+**Description:** This docker image periodically deletes expired rooms from the database and published an appropriate event on the MQ.
+
+**Environment Variables:**
+
+- `DATABASE_USER` - User on the database host.
+- `DATABASE_PASSWORD` - Password of the database.
+- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
+- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_NAME` - Name of the database.
+- `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
+- `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
+- `MQ_USER` - User on the MQ host.
+- `MQ_PASSWORD` - Password of the MQ.
+- `MQ_HOST` - Address of the MQ host. (no need to specify if using "compose.yaml")
+- `MQ_PORT` - Port the MQ is listening on. (no need to specify if using "compose.yaml")
+- `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
+- `ROOM_DELETION_INTERVAL_MILLIS` - Number of milliseconds between database searches for expired rooms.
 
 ## REST API
 
-## Notice
+### Create a Room
 
-There is no input validation for most parts of this server.
+> [POST] `/room-service/create`
 
-This is because room service is expected to be used with a gateway that prevents unauthorized access, and that authorized parties would send valid data (i.e. validation is done on their side)
+Creates a new room.
 
-## Endpoints
+WARNING: This endpoint is potentially abusable. It should be inaccessible by the frontend.
 
-### Check if a user is in a room.
+**Body**
 
-> [get] `/room-service/room/user`
+The body must be of JSON format. It contains the IDs of the users who are in the room and the ID of the question assigned to the room.
 
-This is for the user to check if they are in a room.
-As such, user-service must be contactable. 
+Example request body:
 
-**Cookie**
-
-- `session-token` - ID of the user to query
-
-**Returns**
-
-- `200` - If the user is in a room. Returns the following json
-  - ```{
-    'room-id': string,
-    users: [string],
-    'questions-id': string,
-    'expire-at': date,
-  }
-    ```
-- `401` - If session is invalid or missing `session-token``
-- `404` - If the user is not in a room.
-- `500` - For any sever error
-
-### Check what room a user belongs to and the info regarding it
-
-> [post] `/room-service/room/user`
-
-For services, this is probably the preferred way to check.
-
-**Path Parameters**
-
-Either parameters suffice, however `user-id` takes precedence 
-- `user-id` - ID of the user to query (does not query user-service)
-- `session-token` - session token to query (requires user-service to be up)
-
-**Returns**
-
-- `200` - If the user is in a room and the details
-  ```
-  {
-    'room-id': string,
-    users: [string],
-    'questions-id': string,
-    'expire-at': date,
-  }
-  ```
-- `401` - If provided session-token is invalid or if neither `user-id` and `session-token` are provided.
-- `404` - If the user is not in a room.
-- `500` - For any sever error
-
-### Check if the user's room is still alive.
-
-> [get] `/room-service/room/user/alive`
-
-Same as without `/room-service/room/user`, except does not return room data contents. 
-As such, user-service must be contactable. 
-
-**Cookie**
-
-- `session-token` - Session token of the user
-
-**Returns**
-
-- `200` - If the user is in a room. 
-- `401` - If session is invalid or missing `session-token`
-- `404` - If the user is not in a room.
-- `500` - For any sever error
-
-### Keeps the room alive
-
-> [PUT] `/room-service/room/user/keep-alive`
-
-Extends the room's lifespan by mongoRoomExtend milliseconds.
-
-Requires access to user-service.
-
-**Cookie**
-
-- `session-token` - Session token of the user
-
-**Returns**
-
-- `200` - If the user is in a room. 
-- `401` - If session is invalid or missing `session-token`
-- `404` - If the user is not in a room.
-- `500` - For any sever error
-
-### Create room
-
-> [post] `/room-service/create`
-
-This is primarily for matching service. It is assumed that the provided data is correct and without errors.
-
-Currently it allows > 2 users to be added. 
-
-**Parameters**
-
-Json formatted
-
-```
+```json
 {
-  "users" : string[],
-  "questions-id" : string,
+  "user-ids": [1, 2],
+  "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
 }
 ```
 
-**Returns**
+**Response**
 
-- `200` - On success
+- `201` - Room created. The response body contains the ID of the room.
+  - Example response body:
+    ```json
+    { "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd" }
+    ```
+- `400` - Body is not a valid JSON object or one or more parameter are invalid. The reason for the error is provided in the response body.
+  - Example response body:
+    ```json
+    {
+      "user-ids": "User ID must be an integer.",
+      "question-id": "Question ID cannot be empty."
+    }
+    ```
+- `500` - Unexpected error occurred on the server.
 
-  ```
-  {
-    "room-id" : string,
-    'expire-at': room.expireAt,
-  }
-  ```
+### Get a Room by Room ID
 
-- `500` - For any sever errors
+> [GET] `/room-service/room/:room-id/info`
 
-### Delete room
-
-> [Delete] `/room-service/room/:rid`
-
-This is used for testing to delete from mongoDB.
+Gets information about the room whose room ID was specified.
 
 **Path Parameters**
 
-- `rid` - Room ID
+- `room-id` - Room ID.
 
-**Returns**
+**Response**
 
-- `200` - On delete success
-- `404` - Room does not exist
-- `500` - For any sever error
+- `200` - Success. The response will contain information about the room.
+  - Example response body:
+    ```json
+    {
+      "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
+      "user-ids": [1, 2],
+      "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+      "expire-at": "2023-11-04T03:03:49.692Z"
+    }
+    ```
+- `400` - One or more path parameters are invalid. The reason for the error is provided in the response body.
+  - Example response body:
+    ```json
+    { "room-id": "Room ID cannot be empty." }
+    ```
+- `404` - No room was found that has the specified room ID.
+- `500` - Unexpected error occurred on the server.
 
-### Leave room
+### Get a Room by User ID
 
-> [put] `/room-service/room/leave-room`
+> [GET] `/room-service/room/user`
 
-This is used by users to leave the room.
-
-By default, a room will get deleted after some time if keep-alive messages is not sent by the users.
-
-Requires access to user-service.
+Gets information about the room which contains the user who owns the specified access token.
 
 **Cookies**
 
-- `session-token` - Session Token of the user
+- `access-token` - Access token.
 
-**Returns**
+**Response**
 
-- `200` - On leave success
-- `401` - If session-token is invalid or missing
-- `404` - If room with the particular room id does not exist
-- `500` - For any sever error
+- `200` - Success. The response will contain information about the room.
+  - Example response body:
+    ```json
+    {
+      "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
+      "user-ids": [1, 2],
+      "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+      "expire-at": "2023-11-04T03:03:49.692Z"
+    }
+    ```
+- `401` - Access token was not provided or is invalid.
+- `404` - User who owns the access token does not belong in any room.
+- `500` - Unexpected error occurred on the server.
 
-### Retrieve room info
+### Extend a Lifespan of a Room
 
-> [get] `/room-service/room/:rid/info`
+> [PUT] `/room-service/room/user/keep-alive`
 
-This is for the services to retrieve information about the room they are in.
+Extends the lifespan of the room which contains the user who owns the specified access token.
+
+**Cookies**
+
+- `access-token` - Access token.
+
+**Response**
+
+- `200` - Success. The response will contain the updated expiry of the room.
+  - Example response body:
+    ```json
+    { "expire-at": "2023-11-04T03:03:49.692Z" }
+    ```
+- `401` - Access token was not provided or is invalid.
+- `404` - User who owns the access token does not belong in any room.
+- `500` - Unexpected error occurred on the server.
+
+### Remove a User from a Room
+
+> [DELETE] `/room-service/room/leave-room`
+
+Removes the user who owns the specified access token from the room said user is in.
+
+**Cookies**
+
+- `access-token` - Access token.
+
+**Response**
+
+- `200` - Success.
+- `401` - Access token was not provided or is invalid.
+- `404` - User who owns the access token does not belong in any room.
+- `500` - Unexpected error occurred on the server.
+
+### Delete a Room
+
+> [DELETE] `/room-service/room/:room-id`
+
+Deletes the room whose room ID was specified.
+
+WARNING: This endpoint is only available during development. It will not be accessible during production.
 
 **Path Parameters**
 
-- `rid` - ID of the room to query
+- `room-id` - ID of the room.
 
-**Returns**
+**Response**
 
-- `200` - On success and the following json
-  ```
-  {
-    'room-id': string,
-    users: [string],
-    'questions-id': string,
-    'expire-at': date,
-  }
-  ```
-
-- `404` - If room id is not found
-- `500` - For any sever errors
+- `200` - Success.
+- `400` - One or more path parameters are invalid. The reason for the error is provided in the response body.
+  - Example response body:
+    ```json
+    { "room-id": "Room ID cannot be empty." }
+    ```
+- `404` - No room was found that has the specified room ID.
+- `500` - Unexpected error occurred on the server.
