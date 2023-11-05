@@ -26,8 +26,8 @@ async function periodicallyDeleteRooms(): Promise<void> {
     const rooms: Room[] = await deleteExpiredRoomsFromDatabase();
     await publishDeleteRoomEvents(rooms);
 
-    await new Promise(() =>
-      setTimeout(() => {}, expiredRoomDeleterConfig.roomDeletionIntervalMillis),
+    await new Promise((resolve) =>
+      setTimeout(resolve, expiredRoomDeleterConfig.roomDeletionIntervalMillis),
     );
   }
 }
@@ -39,11 +39,10 @@ async function deleteExpiredRoomsFromDatabase(): Promise<Room[]> {
     return rooms;
   }
 
-  if (!(await databaseClient.deleteRooms(rooms.map((room) => room.roomId)))) {
-    console.log('WTF');
-  }
-  for (const room of rooms) {
-    console.log(`Deleted room from database: Room ID = ${room.roomId}`);
+  if (await databaseClient.deleteRooms(rooms.map((room) => room.roomId))) {
+    for (const room of rooms) {
+      console.log(`Deleted room from database: Room ID = ${room.roomId}`);
+    }
   }
 
   return rooms;
