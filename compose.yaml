@@ -59,6 +59,8 @@ services:
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: 'room_service_mq'
       MQ_PORT: 5672
+      MQ_VHOST: ''
+      MQ_SHOULD_USE_TLS: 'false'
       MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
       ROOM_DELETION_INTERVAL_MILLIS: ${ROOM_DELETION_INTERVAL_MILLIS}
     depends_on:
@@ -87,6 +89,8 @@ services:
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: 'room_service_mq'
       MQ_PORT: 5672
+      MQ_VHOST: ''
+      MQ_SHOULD_USE_TLS: 'false'
       MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
       USER_SERVICE_HOST: ${USER_SERVICE_HOST}
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
