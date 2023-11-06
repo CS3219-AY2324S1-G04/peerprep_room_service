@@ -17,20 +17,23 @@ export default class AmqpMqClient implements MqClient {
   private _channel: amqp.Channel | undefined;
 
   public constructor(config: MqClientConfig) {
-    const url: string = `amqp://${encodeURIComponent(
-      config.user,
-    )}:${encodeURIComponent(config.password)}@${config.host}:${config.port}`;
+    this._exchangeName = config.exchangeName;
 
-    this._setupPromise = amqp.connect(url).then(async (connection) => {
-      this._connection = connection;
+    this._setupPromise = (async () => {
+      const protocol: string = config.shouldUseTls ? 'amqps' : 'amqp';
+      const username: string = encodeURIComponent(config.user);
+      const password: string = encodeURIComponent(config.password);
+      const url: string = `${protocol}://${username}:${password}@${
+        config.host
+      }:${config.port}${config.vhost === '' ? '' : `/${config.vhost}`}`;
+
+      this._connection = await amqp.connect(url);
       this._channel = await this._connection.createChannel();
 
-      await this._channel.assertExchange(this._exchangeName, 'fanout', {
+      await this._channel.assertExchange(config.exchangeName, 'fanout', {
         durable: true,
       });
-    });
-
-    this._exchangeName = config.exchangeName;
+    })();
   }
 
   public async initialise(): Promise<void> {
