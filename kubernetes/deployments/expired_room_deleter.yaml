@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: room-service-expired-room-deleter-deployment
+  namespace: peerprep
+  labels:
+    app: room-service-expired-room-deleter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: room-service-expired-room-deleter
+  template:
+    metadata:
+      namespace: peerprep
+      labels:
+        app: room-service-expired-room-deleter
+    spec:
+      containers:
+        - name: room-service-expired-room-deleter
+          image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
+          env:
+            - name: DATABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: room-service-database-client-secret
+                  key: database-password
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-host
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-port
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-name
+            - name: DATABASE_CONNECTION_TIMEOUT_MILLIS
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-connection-timeout-millis
+            - name: DATABASE_MAX_CLIENT_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-database-client-config-map
+                  key: database-max-client-count
+            - name: MQ_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-user
+            - name: MQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: room-service-mq-client-secret
+                  key: mq-password
+            - name: MQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-host
+            - name: MQ_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-port
+            - name: MQ_VHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-vhost
+            - name: MQ_SHOULD_USE_TLS
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-should-use-tls
+            - name: MQ_EXCHANGE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-mq-client-config-map
+                  key: mq-exchange-name
+            - name: ROOM_DELETION_INTERVAL_MILLIS
+              valueFrom:
+                configMapKeyRef:
+                  name: room-service-expired-room-deleter-config-map
+                  key: room-deletion-interval-millis
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 500m
