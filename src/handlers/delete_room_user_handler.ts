@@ -57,6 +57,7 @@ export default class DeleteRoomUserHandler extends Handler {
       roomId: room.roomId,
       userIds: room.userIds.filter((id) => id.toNumber() !== userId.toNumber()),
       questionId: room.questionId,
+      questionLangSlug: room.questionLangSlug,
       roomExpiry: room.roomExpiry,
     };
   }

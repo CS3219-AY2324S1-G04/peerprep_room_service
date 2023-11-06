@@ -7,6 +7,7 @@ import {
 
 import DatabaseClientConfig from '../configs/database_client_config';
 import QuestionId from '../data_structs/question_id';
+import QuestionLangSlug from '../data_structs/question_lang_slug';
 import Room from '../data_structs/room';
 import RoomId from '../data_structs/room_id';
 import UserId from '../data_structs/user_id';
@@ -88,6 +89,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
       roomId: RoomId.parse(room.roomId),
       userIds: UserId.parseMultipleNumbers(room.userIds),
       questionId: QuestionId.parse(room.questionId),
+      questionLangSlug: QuestionLangSlug.parse(room.questionLangSlug),
       roomExpiry: room.roomExpiry,
     };
   }
@@ -106,6 +108,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
       roomId: RoomId.parse(room.roomId),
       userIds: UserId.parseMultipleNumbers(room.userIds),
       questionId: QuestionId.parse(room.questionId),
+      questionLangSlug: QuestionLangSlug.parse(room.questionLangSlug),
       roomExpiry: room.roomExpiry,
     };
   }
@@ -122,6 +125,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
         roomId: RoomId.parse(entity.roomId),
         userIds: UserId.parseMultipleNumbers(entity.userIds),
         questionId: QuestionId.parse(entity.questionId),
+        questionLangSlug: QuestionLangSlug.parse(entity.questionLangSlug),
         roomExpiry: entity.roomExpiry,
       };
     });
@@ -132,6 +136,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
       roomId: room.roomId.toString(),
       userIds: room.userIds.map((id) => id.toNumber()),
       questionId: room.questionId.toString(),
+      questionLangSlug: room.questionLangSlug.toString(),
       roomExpiry: room.roomExpiry,
     });
   }

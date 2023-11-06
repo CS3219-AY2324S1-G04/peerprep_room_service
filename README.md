@@ -125,7 +125,8 @@ Example request body:
 ```json
 {
   "user-ids": [1, 2],
-  "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+  "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+  "question-lang-slug": "typescript"
 }
 ```
 
@@ -141,7 +142,8 @@ Example request body:
     ```json
     {
       "user-ids": "User ID must be an integer.",
-      "question-id": "Question ID cannot be empty."
+      "question-id": "Question ID cannot be empty.",
+      "question-lang-slug": "Question language slug cannot be empty."
     }
     ```
 - `500` - Unexpected error occurred on the server.
@@ -165,6 +167,7 @@ Gets information about the room whose room ID was specified.
       "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
       "user-ids": [1, 2],
       "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+      "question-lang-slug": "typescript",
       "expire-at": "2023-11-04T03:03:49.692Z"
     }
     ```
@@ -195,6 +198,7 @@ Gets information about the room which contains the user who owns the specified a
       "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
       "user-ids": [1, 2],
       "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+      "question-lang-slug": "typescript",
       "expire-at": "2023-11-04T03:03:49.692Z"
     }
     ```
@@ -287,7 +291,8 @@ The message contains the information about the room that was created.
   "room": {
     "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
     "user-ids": [1, 2],
-    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+    "question-lang-slug": "typescript",
   }
 }
 ```
@@ -308,7 +313,8 @@ The message contains the information about the room that was deleted.
   "room": {
     "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
     "user-ids": [2],
-    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+    "question-lang-slug": "typescript",
   }
 }
 ```
@@ -329,7 +335,8 @@ The message contains the information about the updated room as well as the user 
   "room": {
     "room-id": "bb9d89c6-7b02-448d-9948-79ff753d73bd",
     "user-ids": [2],
-    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5"
+    "question-id": "5241ec50-b884-4278-98cf-4c91519eaad5",
+    "question-lang-slug": "typescript",
   },
   "removed-user-id": 1
 }

@@ -4,12 +4,18 @@ import ClientSpecifiedRoom from '../data_structs/client_specified_room';
 import DecodedJson, { DecodedJsonObject } from '../data_structs/decoded_json';
 import HttpErrorInfo from '../data_structs/http_error_info';
 import QuestionId from '../data_structs/question_id';
+import QuestionLangSlug from '../data_structs/question_lang_slug';
 import Room from '../data_structs/room';
 import RoomId from '../data_structs/room_id';
 import UserId from '../data_structs/user_id';
 import DatabaseClient from '../services/database_client';
 import MqClient from '../services/mq_client';
-import { questionIdKey, roomIdKey, userIdsKey } from '../utils/parameter_keys';
+import {
+  questionIdKey,
+  questionLangSlugKey,
+  roomIdKey,
+  userIdsKey,
+} from '../utils/parameter_keys';
 import Handler, { HttpMethod } from './handler';
 
 export default class CreateRoomHandler extends Handler {
@@ -37,6 +43,7 @@ export default class CreateRoomHandler extends Handler {
 
     let userIds: UserId[] | undefined = undefined;
     let questionId: QuestionId | undefined = undefined;
+    let questionLangSlug: QuestionLangSlug | undefined = undefined;
 
     const invalidInfo: { [key: string]: string } = {};
 
@@ -52,11 +59,21 @@ export default class CreateRoomHandler extends Handler {
       invalidInfo[questionIdKey] = (e as Error).message;
     }
 
+    try {
+      questionLangSlug = QuestionLangSlug.parse(data[questionLangSlugKey]);
+    } catch (e) {
+      invalidInfo[questionLangSlugKey] = (e as Error).message;
+    }
+
     if (Object.keys(invalidInfo).length > 0) {
       throw new HttpErrorInfo(400, JSON.stringify(invalidInfo));
     }
 
-    return { userIds: userIds!, questionId: questionId! };
+    return {
+      userIds: userIds!,
+      questionId: questionId!,
+      questionLangSlug: questionLangSlug!,
+    };
   }
 
   private static async _ensureUsersNotInRoom(
@@ -86,6 +103,7 @@ export default class CreateRoomHandler extends Handler {
         roomId: RoomId.create(),
         userIds: room.userIds,
         questionId: room.questionId,
+        questionLangSlug: room.questionLangSlug,
         roomExpiry: new Date(Date.now() + roomExpireMillis),
       };
 

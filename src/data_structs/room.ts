@@ -1,5 +1,6 @@
 import {
   questionIdKey,
+  questionLangSlugKey,
   roomExpiryKey,
   roomIdKey,
   userIdsKey,
@@ -17,6 +18,7 @@ export function createJsonCompatibleRoom(room: Room) {
     [roomIdKey]: room.roomId.toString(),
     [userIdsKey]: room.userIds.map((id) => id.toNumber()),
     [questionIdKey]: room.questionId.toString(),
+    [questionLangSlugKey]: room.questionLangSlug.toString(),
     [roomExpiryKey]: room.roomExpiry.toISOString(),
   };
 }
