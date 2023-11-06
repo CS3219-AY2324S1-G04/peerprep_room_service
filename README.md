@@ -60,7 +60,7 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 - `MQ_PASSWORD` - Password of the MQ.
 - `MQ_HOST` - Address of the MQ host. (no need to specify if using "compose.yaml")
 - `MQ_PORT` - Port the MQ is listening on. (no need to specify if using "compose.yaml")
-- `MQ_VHOST` - Vhost of the MQ (no need to specify if using "compose.yaml").
+- `MQ_VHOST` - Vhost of the MQ. (no need to specify if using "compose.yaml").
 - `MQ_SHOULD_USE_TLS` - Set to "true" if TLS should be used. (no need to specify if using "compose.yaml")
 - `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
 - `USER_SERVICE_HOST` - Address of the User Service host.
