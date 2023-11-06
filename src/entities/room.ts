@@ -11,18 +11,23 @@ export default class Room {
   @Column({ name: 'question_id', nullable: false })
   public questionId: string;
 
+  @Column({ name: 'question_lang_slug', nullable: false })
+  public questionLangSlug: string;
+
   @Column({ name: 'room_expiry', nullable: false })
   public roomExpiry: Date;
 
-  public constructor(
+  private constructor(
     roomId: string,
     userIds: number[],
     questionId: string,
+    questionLangSlug: string,
     roomExpiry: Date,
   ) {
     this.roomId = roomId;
     this.userIds = userIds;
     this.questionId = questionId;
+    this.questionLangSlug = questionLangSlug;
     this.roomExpiry = roomExpiry;
   }
 }

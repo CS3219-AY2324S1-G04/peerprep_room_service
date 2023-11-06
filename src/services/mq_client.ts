@@ -1,6 +1,11 @@
 import Room from '../data_structs/room';
 import UserId from '../data_structs/user_id';
-import { questionIdKey, roomIdKey, userIdsKey } from '../utils/parameter_keys';
+import {
+  questionIdKey,
+  questionLangSlugKey,
+  roomIdKey,
+  userIdsKey,
+} from '../utils/parameter_keys';
 
 export default interface MqClient {
   initialise(): Promise<void>;
@@ -33,6 +38,7 @@ export class RoomEvent {
         [roomIdKey]: this.room.roomId.toString(),
         [userIdsKey]: this.room.userIds.map((id) => id.toNumber()),
         [questionIdKey]: this.room.questionId.toString(),
+        [questionLangSlugKey]: this.room.questionLangSlug.toString(),
       },
     };
   }
