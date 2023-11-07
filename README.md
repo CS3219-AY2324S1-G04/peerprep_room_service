@@ -45,44 +45,44 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 
 **Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api
 
-**Description:** This docker image contains the REST API.
+**Description:** Runs the REST API.
 
 **Environment Variables:**
 
 - `DATABASE_USER` - User on the database host.
 - `DATABASE_PASSWORD` - Password of the database.
-- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
-- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
-- `DATABASE_SHOULD_USE_TLS` - Set to "true" if database connection should be secured with TLS. (no need to specify if using "compose.yaml")
+- `DATABASE_HOST` - Address of the database host.
+- `DATABASE_PORT` - Port the database is listening on.
+- `DATABASE_SHOULD_USE_TLS` - Should database connection be secured with TLS. Set to "true" to enable.
 - `DATABASE_NAME` - Name of the database.
 - `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
 - `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
 - `MQ_USER` - User on the MQ host.
 - `MQ_PASSWORD` - Password of the MQ.
-- `MQ_HOST` - Address of the MQ host. (no need to specify if using "compose.yaml")
-- `MQ_PORT` - Port the MQ is listening on. (no need to specify if using "compose.yaml")
-- `MQ_VHOST` - Vhost of the MQ. (no need to specify if using "compose.yaml").
-- `MQ_SHOULD_USE_TLS` - Set to "true" if TLS should be used. (no need to specify if using "compose.yaml")
+- `MQ_HOST` - Address of the MQ host.
+- `MQ_PORT` - Port the MQ is listening on.
+- `MQ_VHOST` - Vhost of the MQ.
+- `MQ_SHOULD_USE_TLS` - Should MQ connection be secured with TLS. Set to "true" to enable.
 - `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
 - `USER_SERVICE_HOST` - Address of the User Service host.
 - `USER_SERVICE_PORT` - Port the User Service is listening on.
 - `ROOM_EXPIRE_MILLIS` - Number of milliseconds a room can live for since the last expiry date and time extension.
-- `PORT` - Port to listen on. (no need to specify if using "compose.yaml")
-- `NODE_ENV` - Sets the mode the app is running in ("development" or "production")
+- `PORT` - Port to listen on.
+- `NODE_ENV` - Mode the app is running on ("development" or "production").
 
 ### Database Initialiser
 
 **Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_database_initialiser
 
-**Description:** This docker image initialises the database by creating the necessary entities.
+**Description:** Initialises the database by creating the necessary entities.
 
 **Environment Variables:**
 
 - `DATABASE_USER` - User on the database host.
 - `DATABASE_PASSWORD` - Password of the database.
-- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
-- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
-- `DATABASE_SHOULD_USE_TLS` - Set to "true" if database connection should be secured with TLS. (no need to specify if using "compose.yaml")
+- `DATABASE_HOST` - Address of the database host.
+- `DATABASE_PORT` - Port the database is listening on.
+- `DATABASE_SHOULD_USE_TLS` - Should database connection be secured with TLS. Set to "true" to enable.
 - `DATABASE_NAME` - Name of the database.
 - `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
 - `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
@@ -92,23 +92,24 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 
 **Name:** ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
 
-**Description:** This docker image periodically deletes expired rooms from the database and published an appropriate event on the MQ.
+**Description:** Periodically deletes expired rooms from the database and publishes the appropriate event on the MQ.
 
 **Environment Variables:**
 
 - `DATABASE_USER` - User on the database host.
 - `DATABASE_PASSWORD` - Password of the database.
-- `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
-- `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_HOST` - Address of the database host.
+- `DATABASE_PORT` - Port the database is listening on.
+- `DATABASE_SHOULD_USE_TLS` - Should database connection be secured with TLS. Set to "true" to enable.
 - `DATABASE_NAME` - Name of the database.
 - `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
 - `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
 - `MQ_USER` - User on the MQ host.
 - `MQ_PASSWORD` - Password of the MQ.
-- `MQ_HOST` - Address of the MQ host. (no need to specify if using "compose.yaml")
-- `MQ_PORT` - Port the MQ is listening on. (no need to specify if using "compose.yaml")
-- `MQ_VHOST` - Vhost of the MQ. (no need to specify if using "compose.yaml")
-- `MQ_SHOULD_USE_TLS` - Set to "true" if TLS should be used. (no need to specify if using "compose.yaml")
+- `MQ_HOST` - Address of the MQ host.
+- `MQ_PORT` - Port the MQ is listening on.
+- `MQ_VHOST` - Vhost of the MQ.
+- `MQ_SHOULD_USE_TLS` - Should MQ connection be secured with TLS. Set to "true" to enable.
 - `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
 - `ROOM_DELETION_INTERVAL_MILLIS` - Number of milliseconds between database searches for expired rooms.
 
