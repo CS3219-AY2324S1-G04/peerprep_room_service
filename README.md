@@ -53,6 +53,7 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 - `DATABASE_PASSWORD` - Password of the database.
 - `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
 - `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_SHOULD_USE_TLS` - Set to "true" if database connection should be secured with TLS. (no need to specify if using "compose.yaml")
 - `DATABASE_NAME` - Name of the database.
 - `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
 - `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
@@ -81,6 +82,7 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 - `DATABASE_PASSWORD` - Password of the database.
 - `DATABASE_HOST` - Address of the database host. (no need to specify if using "compose.yaml")
 - `DATABASE_PORT` - Port the database is listening on. (no need to specify if using "compose.yaml")
+- `DATABASE_SHOULD_USE_TLS` - Set to "true" if database connection should be secured with TLS. (no need to specify if using "compose.yaml")
 - `DATABASE_NAME` - Name of the database.
 - `DATABASE_CONNECTION_TIMEOUT_MILLIS` - Number of milliseconds for a database client to connect to the database before timing out.
 - `DATABASE_MAX_CLIENT_COUNT` - Max number of database clients.
