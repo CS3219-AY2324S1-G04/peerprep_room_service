@@ -1,13 +1,33 @@
 #!/bin/bash
 
 ### Constants ###
-api_image_name="peerprep_room_service_api"
-database_initialiser_image_name="peerprep_room_service_database_initialiser"
-expired_room_deleter_image_name="peerprep_room_service_expired_room_deleter"
-
+cr="ghcr.io/cs3219-ay2324s1-g04/"
 export_dir="./docker_build"
 
-cr="ghcr.io/cs3219-ay2324s1-g04/"
+image_keys=(api database_initialiser expired_room_deleter)
+
+declare -A images=(
+  [api_name]=${cr}peerprep_room_service_api
+  [api_docker_file]="./dockerfiles/api.dockerfile"
+  [api_should_build]=0
+
+  [database_initialiser_name]=${cr}peerprep_room_service_database_initialiser
+  [database_initialiser_docker_file]="./dockerfiles/database_initialiser.dockerfile"
+  [database_initialiser_should_build]=0
+
+  [expired_room_deleter_name]=${cr}peerprep_room_service_expired_room_deleter
+  [expired_room_deleter_docker_file]="./dockerfiles/expired_room_deleter.dockerfile"
+  [expired_room_deleter_should_build]=0
+)
+
+image_keys_str=""
+for k in ${image_keys[@]}; do
+  if [[ $image_keys_str == "" ]]; then
+    image_keys_str="\"${k}\""
+  else
+    image_keys_str="${image_keys_str}, or \"${k}\""
+  fi
+done
 
 instructions="\n
 Usage: build_images.sh [-h] [-e] [-p] [-i IMAGE] [-t TAG]\n
@@ -18,7 +38,7 @@ Arguments:\n
 -h\t\t     Prints the help message.\n
 -e\t\t     Enables exporting the images to the directory \"${export_dir}\".\n
 -p\t\t     Enables pushing to the container registry after building.\n
--i IMAGE\t Specifies the image to build and push. Value can be \"api\", \"database_initialiser\", or \"expired_room_deleter\". This argument can be specified multiple times to include multiple images.\n
+-i IMAGE\t Specifies the image to build and push. Value can be ${image_keys_str}. This argument can be specified multiple times to include multiple images.\n
 -t TAG\t\t Tags the images built with \"TAG\".
 "
 
@@ -57,7 +77,7 @@ build_image () {
   echo "Exported image to $export_file"
 }
 
-push() {
+push_image() {
   image_name=$1
 
   echo "Pushing $image_name to the container registry ..."
@@ -73,13 +93,9 @@ push() {
 }
 
 ### Parse CLI Arguments ###
-should_build_api=0
-should_build_database_initaliser=0
-should_build_expired_room_deleter=0
 should_export=0
 should_push=0
-
-image_tag=":latest"
+image_tag=':latest'
 
 while getopts hepi:t: flag
 do
@@ -95,32 +111,29 @@ do
       should_push=1
       ;;
     i)
-      case ${OPTARG} in
-        api)
-          should_build_api=1
-          ;;
-        database_initialiser)
-          should_build_database_initaliser=1
-          ;;
-        expired_room_deleter)
-          expired_room_deleter=1
-          ;;
-      esac
+      images[${OPTARG}_should_build]=1
       ;;
     t)
       image_tag=":$OPTARG"
   esac
 done
 
-if [[ $should_build_api == 0 && $should_build_database_initaliser == 0 && $should_build_expired_room_deleter == 0 ]]; then
-  should_build_api=1
-  should_build_database_initaliser=1
-  should_build_expired_room_deleter=1
-fi
+for k in ${image_keys[@]}; do
+  images[${k}_name]=${images[${k}_name]}${image_tag}
+done
 
-api_image_full_name=${cr}${api_image_name}${image_tag}
-database_initialiser_image_full_name=${cr}${database_initialiser_image_name}${image_tag}
-expired_room_deleter_image_full_name=${cr}${expired_room_deleter_image_name}${image_tag}
+should_build_all=1
+for k in ${image_keys[@]}; do
+  if [[ ${images[${k}_should_build]} == 1 ]]; then
+    should_build_all=0
+  fi
+done
+
+if [[ ${should_build_all} == 1 ]]; then
+  for k in ${image_keys[@]}; do
+    images[${k}_should_build]=1
+  done
+fi
 
 ### Transpile Typescript ###
 echo "Transpiling Typescript ..."
@@ -135,31 +148,19 @@ fi
 echo "Transpile successful."
 
 ### Build Images ###
-if [[ $should_build_api == 1 ]]; then
-  build_image "dockerfiles/api.dockerfile" $api_image_full_name
-fi
-
-if [[ $should_build_database_initaliser == 1 ]]; then
-  build_image "dockerfiles/database_initialiser.dockerfile" $database_initialiser_image_full_name
-fi
-
-if [[ $should_build_expired_room_deleter == 1 ]]; then
-  build_image "dockerfiles/expired_room_deleter.dockerfile" $expired_room_deleter_image_full_name
-fi
+for k in ${image_keys[@]}; do
+  if [[ ${images[${k}_should_build]} == 1 ]]; then
+    build_image ${images[${k}_docker_file]} ${images[${k}_name]}
+  fi
+done
 
 ### Push Images to the Container Registry ###
 if [[ $should_push == 0 ]]; then
   exit 0
 fi
 
-if [[ $should_build_api == 1 ]]; then
-  push $api_image_full_name
-fi
-
-if [[ $should_build_database_initaliser == 1 ]]; then
-  push $database_initialiser_image_full_name
-fi
-
-if [[ $should_build_expired_room_deleter == 1 ]]; then
-  push $expired_room_deleter_image_full_name
-fi
+for k in ${image_keys[@]}; do
+  if [[ ${images[${k}_should_build]} == 1 ]]; then
+    push_image ${images[${k}_name]}
+  fi
+done
