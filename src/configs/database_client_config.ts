@@ -7,6 +7,7 @@ export default class DatabaseClientConfig {
   public static readonly userEnvVar: string = 'DATABASE_USER';
   public static readonly hostEnvVar: string = 'DATABASE_HOST';
   public static readonly portEnvVar: string = 'DATABASE_PORT';
+  public static readonly shouldUseTlsEnvVar: string = 'DATABASE_SHOULD_USE_TLS';
   public static readonly databaseNameEnvVar: string = 'DATABASE_NAME';
   public static readonly connectionTimeoutMillisEnvVar: string =
     'DATABASE_CONNECTION_TIMEOUT_MILLIS';
@@ -24,6 +25,7 @@ export default class DatabaseClientConfig {
   public readonly user: string;
   public readonly host: string;
   public readonly port: number;
+  public readonly shouldUseTls: boolean;
   public readonly databaseName: string;
   public readonly connectionTimeoutMillis: number;
   public readonly maxClientCount: number;
@@ -49,6 +51,7 @@ export default class DatabaseClientConfig {
     this.port =
       parseIntStrict(env[DatabaseClientConfig.portEnvVar]) ??
       DatabaseClientConfig.defaultPort;
+    this.shouldUseTls = env[DatabaseClientConfig.shouldUseTlsEnvVar] === 'true';
     this.databaseName =
       DatabaseClientConfig._getNonEmptyString(
         env[DatabaseClientConfig.databaseNameEnvVar],

@@ -30,7 +30,7 @@ services:
     environment:
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_HOST: 'room_service_database'
+      DATABASE_HOST: room_service_database
       DATABASE_PORT: 5432
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
@@ -50,17 +50,18 @@ services:
     environment:
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_HOST: 'room_service_database'
+      DATABASE_HOST: room_service_database
       DATABASE_PORT: 5432
+      DATABASE_SHOULD_USE_TLS: false
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
       DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
-      MQ_HOST: 'room_service_mq'
+      MQ_HOST: room_service_mq
       MQ_PORT: 5672
       MQ_VHOST: ''
-      MQ_SHOULD_USE_TLS: 'false'
+      MQ_SHOULD_USE_TLS: false
       MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
       ROOM_DELETION_INTERVAL_MILLIS: ${ROOM_DELETION_INTERVAL_MILLIS}
     depends_on:
@@ -76,21 +77,22 @@ services:
     networks:
       - peerprep_network
     ports:
-      - '${API_EXPOSED_PORT}:9003'
+      - ${API_EXPOSED_PORT}:9003
     environment:
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_HOST: 'room_service_database'
+      DATABASE_HOST: room_service_database
       DATABASE_PORT: 5432
+      DATABASE_SHOULD_USE_TLS: false
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_CONNECTION_TIMEOUT_MILLIS: ${DATABASE_CONNECTION_TIMEOUT_MILLIS}
       DATABASE_MAX_CLIENT_COUNT: ${DATABASE_MAX_CLIENT_COUNT}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
-      MQ_HOST: 'room_service_mq'
+      MQ_HOST: room_service_mq
       MQ_PORT: 5672
       MQ_VHOST: ''
-      MQ_SHOULD_USE_TLS: 'false'
+      MQ_SHOULD_USE_TLS: false
       MQ_EXCHANGE_NAME: ${MQ_EXCHANGE_NAME}
       USER_SERVICE_HOST: ${USER_SERVICE_HOST}
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
