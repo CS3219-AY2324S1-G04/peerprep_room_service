@@ -4,14 +4,23 @@
 cr="ghcr.io/cs3219-ay2324s1-g04/"
 export_dir="./docker_build"
 
+################################################################################
+#                                                                              #
+#                  This marks the start of image information.                  #
+#                                                                              #
+#                        If you are adding a new image:                        #
+#   1. Add a unique key in "image_keys" for your image.                        #
+#   2. For each image specify the following variables:                         #
+#     - images_KEY_name - Name of the image. (should be prepended with the     #
+#       container registry ${cr})                                              #
+#     - images_KEY_docker_file - Path to the dockerfile.                       #
+#     - images_KEY_should_build - Should be 0. This value is set by CLI        #
+#       arguments.                                                             #
+#                                                                              #
+################################################################################
+
 # This list should contain a unique key for each image.
 image_keys=(api database_initialiser expired_room_deleter)
-
-# For each image specify the following variables:
-# - images_KEY_name - Name of the image. (should be prepended with the container registry ${cr})
-# - images_KEY_docker_file - Path to the dockerfile.
-# - images_KEY_should_build - Should be 0. This value is set by CLI arguments.
-# Note: KEY refers to a key in image_keys
 
 # API image
 images_api_name=${cr}peerprep_room_service_api
@@ -27,6 +36,12 @@ images_database_initialiser_should_build=0
 images_expired_room_deleter_name=${cr}peerprep_room_service_expired_room_deleter
 images_expired_room_deleter_docker_file="./dockerfiles/expired_room_deleter.dockerfile"
 images_expired_room_deleter_should_build=0
+
+################################################################################
+#                                                                              #
+#                   This marks the end of image information.                   #
+#                                                                              #
+################################################################################
 
 # Instructions
 image_keys_str=""
