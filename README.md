@@ -50,10 +50,10 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 Legend:
 
 - Start of arrow indicates request origin and end of arrow indicates request destination.
-- <span style="color:#505050">Dark grey</span> items represents internal servers/containers.
-- <span style="color:#DA4026">Red</span> items represents internal servers/containers that are temporary.
-- <span style="color:#7FBA42">Green</span> items represents internal servers/containers that are exposed.
-- <span style="color:#2072B8">Blue</span> items represents external servers/containers.
+- Dark grey items represents internal servers/containers.
+- Red items represents internal servers/containers that are temporary.
+- Green items represents internal servers/containers that are exposed.
+- Blue items represents external servers/containers.
 
 **REST API Server**
 
