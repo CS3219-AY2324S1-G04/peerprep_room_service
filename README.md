@@ -6,10 +6,14 @@ Handles the storing and retrieving of room information.
 
 - [Quickstart Guide](#quickstart-guide)
 - [Build Script](#build-script)
+- [Architecture](#architecture)
 - [Docker Images](#docker-images)
   - [API](#api)
   - [Database Initialiser](#database-initialiser)
   - [Expired Room Deleter](#expired-room-deleter)
+- [Deployment](#deployment)
+  - [Kubernetes Deployment](#kubernetes-deployment)
+  - [Docker Compose Deployment](#docker-compose-deployment)
 - [REST API](#rest-api)
   - [Create a Room](#create-a-room)
   - [Get a Room by Room ID](#get-a-room-by-room-id)
@@ -38,6 +42,40 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 ```
 ./build_images.sh -h
 ```
+
+## Architecture
+
+![](./images/architecture.jpg)
+
+Note: Start of arrow indicates request origin and end of arrow indicates request destination.
+
+**REST API Server**
+
+- Handles REST API requests.
+- Exposed to clients/servers outside the service.
+- Can be scaled horizontally.
+- Corresponds to the [API](#api) docker image.
+
+**Database Initialiser**
+
+- Creates entities in the database.
+- Does nothing if the database already contains one or more entities it intends to create (behaviour can be changed via environment variables).
+- Shuts down once it is done initialising the database.
+- Corresponds to the [Database Initialiser](#database-initialiser) docker image.
+
+**Expired Room Deleter**
+
+- Periodically deletes all expired rooms from the database.
+- Corresponds to the [Expired Room Deleter](#expired-room-deleter) docker image.
+
+**Database**
+
+- Database for storing user information.
+
+**Message Broker**
+
+- Message broker for publishing room events.
+- Exposed to clients/servers outside the service.
 
 ## Docker Images
 
@@ -112,6 +150,52 @@ Note that Room Service relies on User Service. Please ensure that User Service i
 - `MQ_SHOULD_USE_TLS` - Should MQ connection be secured with TLS. Set to "true" to enable.
 - `MQ_EXCHANGE_NAME` - Name of the MQ exchange.
 - `ROOM_DELETION_INTERVAL_MILLIS` - Number of milliseconds between database searches for expired rooms.
+
+## Deployment
+
+### Kubernetes Deployment
+
+This is the main deployment method for production.
+
+**Note:**
+
+- The database and message broker are hosted externally, not within the Kubernetes cluster.
+
+**Prerequisite**
+
+- Docker images must be pushed to the container registry and made public.
+  - To push to the container registry (assuming one has the necessary permissions), run: `./build_images.sh -p`
+  - To make the images public, change the visibility of the image on [GitHub](https://github.com/orgs/CS3219-AY2324S1-G04/packages).
+- You must have the Kubernetes secrets for Room Service (this is not stored in the Git repository).
+
+**Steps:**
+
+1. Ensure the "peerprep" namespace has been created: `kubectl create namespace peerprep`
+2. Navigate to the "kubernetes" directory: `cd kubernetes`
+3. Update the secrets in the "secrets" directory.
+4. Deploy the Kubernetes objects: `./deploy.sh`
+    - To delete the Kubernetes objects, run: `./delete.sh`
+
+### Docker Compose Deployment
+
+This is intended for development use only. It is meant to make developing other services easier.
+
+**Note:**
+
+- No horizontal auto scaling is provided.
+- The database is created by Docker compose and data is not backed up.
+- The message broker is created by Docker compose and data is not backed up.
+
+**Prerequisite**
+
+- Docker images must be built.
+  - To build the images, run: `./build_images.sh`
+
+**Steps:**
+
+1. Ensure that the "peerprep" network exist: `docker network create -d bridge peerprep`
+2. Create the docker containers: `docker compose up`
+    - To delete the docker containers, run: `docker compose down`
 
 ## REST API
 
