@@ -1,11 +1,15 @@
 /**
+ * @file Utility functions for parsing.
+ */
+
+/**
  * Converts a string {@link raw} to an integer.
  *
  * Unlike {@link parseInt}, this function will return undefined if the exact
  * content of the string is not a base 10 integer.
  * @param raw - String to parse.
- * @returns Integer resulting from the parsing  if it {@link raw} contains a
- * base 10 integer. Else, returns undefined.
+ * @returns Parsed integer if {@link raw} contains a base 10 integer.
+ * Else, returns undefined.
  */
 export function parseIntStrict(raw: string | undefined): number | undefined {
   if (raw === undefined) {

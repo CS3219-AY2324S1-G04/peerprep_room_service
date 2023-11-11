@@ -1,3 +1,6 @@
+/**
+ * @file Defines {@link GetRoomByIdHandler}.
+ */
 import express from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
@@ -8,11 +11,16 @@ import DatabaseClient from '../services/database_client';
 import { roomIdKey, roomIdPathKey } from '../utils/parameter_keys';
 import Handler, { HttpMethod } from './handler';
 
+/**
+ * Handles REST API requests for getting the room whose room ID was specified.
+ */
 export default class GetRoomByIdHandler extends Handler {
+  /** @inheritdoc */
   public override get method(): HttpMethod {
     return HttpMethod.get;
   }
 
+  /** @inheritdoc */
   public override get subPath(): string {
     return `rooms/:${roomIdPathKey}`;
   }
@@ -42,6 +50,19 @@ export default class GetRoomByIdHandler extends Handler {
     return room;
   }
 
+  /**
+   * Gets the room whose room ID was specified in the request. Sends a HTTP 200
+   * response containing information about the room in the response body.
+   * @param req - Information about the request.
+   * @param res - For creating and sending the response.
+   * @param next - Called to let the next handler (if any) handle the request.
+   * @param databaseClient - Client for communicating with the database.
+   * @throws {HttpErrorInfo} Error 400 if one or more parameters are invalid.
+   * Message contains a JSON string of the reasons for the error.
+   * @throws {HttpErrorInfo} Error 404 if no room was found that has the
+   * specified room ID.
+   * @throws {HttpErrorInfo} Error 500 if an unexpected error occurs.
+   */
   public override async handleLogic(
     req: express.Request,
     res: express.Response,

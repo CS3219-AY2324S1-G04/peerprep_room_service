@@ -29,6 +29,10 @@ export default class RoomId {
     return new RoomId(rawRoomId as string);
   }
 
+  /**
+   * Creates a {@link RoomId} by using a random value.
+   * @returns Created {@link RoomId}.
+   */
   public static create(): RoomId {
     return new RoomId(randomUUID());
   }
@@ -41,6 +45,7 @@ export default class RoomId {
     return rawRoomId !== undefined && rawRoomId.length > 0;
   }
 
+  /** @returns String representation. */
   public toString(): string {
     return this._roomId;
   }

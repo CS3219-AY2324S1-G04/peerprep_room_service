@@ -1,6 +1,7 @@
 /**
  * @file Defines {@link QuestionLangSlug}.
  */
+
 /** Question language slug. */
 export default class QuestionLangSlug {
   private readonly _questionLangSlug: string;
@@ -44,6 +45,7 @@ export default class QuestionLangSlug {
     return rawQuestionLangSlug !== undefined && rawQuestionLangSlug.length > 0;
   }
 
+  /** @returns String representation. */
   public toString(): string {
     return this._questionLangSlug;
   }

@@ -1,3 +1,6 @@
+/**
+ * @file Defines {@link PostgresDatabaseClient}.
+ */
 import {
   ArrayContains,
   ArrayOverlap,
@@ -14,6 +17,7 @@ import UserId from '../data_structs/user_id';
 import RoomEntity from '../entities/room';
 import DatabaseClient from './database_client';
 
+/** Client for performing database operations on a Postgres database. */
 export default class PostgresDatabaseClient implements DatabaseClient {
   private readonly _dataSource: DataSource;
 
@@ -36,18 +40,22 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     });
   }
 
+  /** @inheritdoc */
   public async initialise(): Promise<void> {
     await this._dataSource.initialize();
   }
 
+  /** @inheritdoc */
   public async synchronise(): Promise<void> {
     await this._dataSource.synchronize();
   }
 
+  /** @inheritdoc */
   public async disconnect(): Promise<void> {
     await this._dataSource.destroy();
   }
 
+  /** @inheritdoc */
   public async doEntitiesExist(): Promise<boolean> {
     return (
       (
@@ -59,6 +67,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async deleteEntities(): Promise<void> {
     await this._dataSource.query(
       `DROP TABLE IF EXISTS ${
@@ -67,6 +76,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async areAnyUsersInRoom(userIds: UserId[]): Promise<boolean> {
     return (
       ((await this._dataSource.getRepository(RoomEntity).findOne({
@@ -76,6 +86,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async fetchRoomFromRoomId(roomId: RoomId): Promise<Room | undefined> {
     const room: RoomEntity | undefined =
       (await this._dataSource.getRepository(RoomEntity).findOne({
@@ -95,6 +106,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     };
   }
 
+  /** @inheritdoc */
   public async fetchRoomFromUserId(userId: UserId): Promise<Room | undefined> {
     const room: RoomEntity | undefined =
       (await this._dataSource.getRepository(RoomEntity).findOne({
@@ -114,6 +126,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     };
   }
 
+  /** @inheritdoc */
   public async fetchExpiredRooms(): Promise<Room[]> {
     const rooms: RoomEntity[] = await this._dataSource
       .getRepository(RoomEntity)
@@ -132,6 +145,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     });
   }
 
+  /** @inheritdoc */
   public async createRoom(room: Room): Promise<void> {
     await this._dataSource.getRepository(RoomEntity).insert({
       roomId: room.roomId.toString(),
@@ -142,6 +156,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     });
   }
 
+  /** @inheritdoc */
   public async updateRoomExpiry(
     userId: UserId,
     expiry: Date,
@@ -164,6 +179,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async removeRoomUser(userId: UserId): Promise<boolean> {
     const room: Room | undefined = await this.fetchRoomFromUserId(userId);
 
@@ -186,6 +202,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async deleteRoom(roomId: RoomId): Promise<boolean> {
     return (
       ((
@@ -196,6 +213,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public async deleteRooms(roomIds: RoomId[]): Promise<boolean> {
     return (
       ((
@@ -206,6 +224,7 @@ export default class PostgresDatabaseClient implements DatabaseClient {
     );
   }
 
+  /** @inheritdoc */
   public isUniqueConstraintViolated(err: unknown): boolean {
     return (
       err instanceof Error &&

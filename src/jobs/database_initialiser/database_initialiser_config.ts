@@ -1,6 +1,7 @@
 /**
  * @file Defines {@link DatabaseInitialiserConfig}.
  */
+
 /** Configs for the database initialiser. */
 export default class DatabaseInitialiserConfig {
   /**

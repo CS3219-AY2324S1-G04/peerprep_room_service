@@ -1,5 +1,9 @@
+/**
+ * @file Defines {@link AccessTokenVerifier}.
+ */
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+/** Verifies access tokens. */
 export default class AccessTokenVerifier {
   private static _userIdKey: string = 'user-id';
   private static _userRoleKey: string = 'user-role';
@@ -8,10 +12,20 @@ export default class AccessTokenVerifier {
 
   private readonly _publicKey: string;
 
+  /**
+   * @param publicKey - Public key for verifying access tokens.
+   */
   public constructor(publicKey: string) {
     this._publicKey = publicKey;
   }
 
+  /**
+   * Verifies the access token {@link accessToken}.
+   * @param accessToken - Access token to verify.
+   * @returns User profile created from the payload of the verified access
+   * token.
+   * @throws Error if the access token is invalid.
+   */
   public verify(accessToken: string): UserProfile {
     let payload: JwtPayload;
 
@@ -30,9 +44,16 @@ export default class AccessTokenVerifier {
   }
 }
 
+/**
+ * User profile.
+ */
 export interface UserProfile {
+  /** User ID. */
   userId: number;
+  /** User role. */
   userRole: string;
+  /** Username. */
   username: string;
+  /** Email address. */
   emailAddress: string;
 }

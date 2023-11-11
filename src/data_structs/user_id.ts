@@ -7,7 +7,7 @@ export default class UserId {
 
   private readonly _userId: number;
 
-  public constructor(userId: number) {
+  private constructor(userId: number) {
     this._userId = userId;
   }
 
@@ -51,6 +51,12 @@ export default class UserId {
     return new UserId(rawUserId as number);
   }
 
+  /**
+   * Parses each item in an array of numbers {@link rawUserIds} as user IDs.
+   * @param rawUserIds - Values to parse.
+   * @returns Array of parsed {@link UserId}.
+   * @throws Error if parsing fails.
+   */
   public static parseMultipleNumbers(rawUserIds: unknown): UserId[] {
     return (Array.isArray(rawUserIds) ? rawUserIds : [rawUserIds]).map(
       UserId.parseNumber,
@@ -77,10 +83,12 @@ export default class UserId {
     return rawUserId > 0;
   }
 
+  /** @returns String representation. */
   public toString(): string {
     return this._userId.toString();
   }
 
+  /** @returns Number representation. */
   public toNumber(): number {
     return this._userId;
   }

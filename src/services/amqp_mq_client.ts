@@ -1,3 +1,6 @@
+/**
+ * @file Defines {@link AmqpMqClient}.
+ */
 import amqp from 'amqplib';
 
 import MqClientConfig from '../configs/mq_client_config';
@@ -9,6 +12,7 @@ import MqClient, {
   RoomEvent,
 } from './mq_client';
 
+/** Client for performing MQ operations on an AMQP supported MQ. */
 export default class AmqpMqClient implements MqClient {
   private readonly _setupPromise: Promise<void>;
   private readonly _exchangeName: string;
@@ -16,6 +20,9 @@ export default class AmqpMqClient implements MqClient {
   private _connection: amqp.Connection | undefined;
   private _channel: amqp.Channel | undefined;
 
+  /**
+   * @param config - Configs for the MQ client.
+   */
   public constructor(config: MqClientConfig) {
     this._exchangeName = config.exchangeName;
 
@@ -36,19 +43,23 @@ export default class AmqpMqClient implements MqClient {
     })();
   }
 
+  /** @inheritdoc */
   public async initialise(): Promise<void> {
     await this._setupPromise;
   }
 
+  /** @inheritdoc */
   public async disconnect(): Promise<void> {
     await this._channel?.close();
     await this._connection?.close();
   }
 
+  /** @inheritdoc */
   public async publishCreateRoomEvent(room: Room): Promise<void> {
     await this._publishEvent(new RoomEvent(EventType.create, room));
   }
 
+  /** @inheritdoc */
   public async publishRemoveUserEvent(
     room: Room,
     removedUserId: UserId,
@@ -56,6 +67,7 @@ export default class AmqpMqClient implements MqClient {
     await this._publishEvent(new RemoveUserRoomEvent(room, removedUserId));
   }
 
+  /** @inheritdoc */
   public async publishDeleteRoomEvent(room: Room): Promise<void> {
     await this._publishEvent(new RoomEvent(EventType.delete, room));
   }

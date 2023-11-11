@@ -7,8 +7,9 @@ import HttpErrorInfo from '../data_structs/http_error_info';
 import DatabaseClient from '../services/database_client';
 import MqClient from '../services/mq_client';
 
-/** Handler of a HTTP route. */
+/** Handler of a REST API route. */
 export default abstract class Handler {
+  /** @returns Request path to handle. */
   public get path(): string {
     return `/room-service/${this.subPath}`;
   }

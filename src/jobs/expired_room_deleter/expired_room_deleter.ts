@@ -1,3 +1,9 @@
+/**
+ * @file Entrypoint to the expired room deleter.
+ *
+ * The expired room deleter deletes expired rooms from the database at fix
+ * intervals.
+ */
 import DatabaseClientConfig from '../../configs/database_client_config';
 import MqClientConfig from '../../configs/mq_client_config';
 import Room from '../../data_structs/room';
