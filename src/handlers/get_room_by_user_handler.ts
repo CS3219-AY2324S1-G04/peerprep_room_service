@@ -1,3 +1,6 @@
+/**
+ * @file Defines {@link GetRoomByUserHandler}.
+ */
 import express from 'express';
 
 import HttpErrorInfo from '../data_structs/http_error_info';
@@ -10,18 +13,28 @@ import DatabaseClient from '../services/database_client';
 import { accessTokenKey } from '../utils/parameter_keys';
 import Handler, { HttpMethod } from './handler';
 
+/**
+ * Handles REST API requests for getting the room which contains the user who
+ * sent the request.
+ */
 export default class GetRoomByUserHandler extends Handler {
   private _accessTokenVerifier: AccessTokenVerifier;
 
+  /**
+   * @param accessTokenVerifier - Access token verifier for verifying access
+   * tokens.
+   */
   public constructor(accessTokenVerifier: AccessTokenVerifier) {
     super();
     this._accessTokenVerifier = accessTokenVerifier;
   }
 
+  /** @inheritdoc */
   public override get method(): HttpMethod {
     return HttpMethod.get;
   }
 
+  /** @inheritdoc */
   public override get subPath(): string {
     return 'room';
   }
@@ -56,6 +69,19 @@ export default class GetRoomByUserHandler extends Handler {
     return room;
   }
 
+  /**
+   * Gets the room which contains the user whose access token was specified in
+   * a request cookie. Sends a HTTP 200 response containing information about
+   * the room in the resposne body.
+   * @param req - Information about the request.
+   * @param res - For creating and sending the response.
+   * @param next - Called to let the next handler (if any) handle the request.
+   * @param databaseClient - Client for communicating with the database.
+   * @throws {HttpErrorInfo} Error 401 if no access token was provided or the
+   * access token is invalid.
+   * @throws {HttpErrorInfo} Error 404 if the user is not in any room.
+   * @throws {HttpErrorInfo} Error 500 if an unexpected error occurs.
+   */
   public override async handleLogic(
     req: express.Request,
     res: express.Response,

@@ -1,5 +1,7 @@
 /**
- * @file Initialises the database.
+ * @file Entrypoint to the database initialiser.
+ *
+ * The database initialiser creates the necessary entities in the database.
  */
 import DatabaseClientConfig from '../../configs/database_client_config';
 import DatabaseClient from '../../services/database_client';

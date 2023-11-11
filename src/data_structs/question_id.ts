@@ -37,6 +37,7 @@ export default class QuestionId {
     return rawQuestionId !== undefined && rawQuestionId.length > 0;
   }
 
+  /** @returns String representation. */
   public toString(): string {
     return this._questionId;
   }
