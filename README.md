@@ -4,7 +4,6 @@ Handles the storing and retrieving of room information.
 
 ## Table of Contents
 
-- [Quickstart Guide](#quickstart-guide)
 - [Build Script](#build-script)
 - [Architecture](#architecture)
 - [Docker Images](#docker-images)
@@ -25,15 +24,6 @@ Handles the storing and retrieving of room information.
   - [Create Room](#create-room)
   - [Delete Room](#delete-room)
   - [Remove User from Room](#remove-user-from-room)
-
-## Quickstart Guide
-
-Note that Room Service relies on User Service. Please ensure that User Service is up and running before attempting to start Room Service.
-
-1. Clone this repository.
-2. Build the docker images by running: `./build_images.sh`
-3. Modify the ".env" file as per needed. Refer to [Docker Images](#docker-images) for the list of environment variables.
-4. Create the docker containers by running: `docker compose up`
 
 ## Build Script
 
@@ -172,14 +162,14 @@ This is the main deployment method for production.
 - Docker images must be pushed to the container registry and made public.
   - To push to the container registry (assuming one has the necessary permissions), run: `./build_images.sh -p`
   - To make the images public, change the visibility of the image on [GitHub](https://github.com/orgs/CS3219-AY2324S1-G04/packages).
-- You must have the Kubernetes secrets for Room Service (this is not stored in the Git repository).
+- Kubernetes cluster must be setup as specified in the [main repository](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g04#deployment).
+- User Service must be deployed within the Kubernetes cluster.
 
 **Steps:**
 
 1. Ensure the "peerprep" namespace has been created: `kubectl create namespace peerprep`
 2. Navigate to the "kubernetes" directory: `cd kubernetes`
-3. Update the secrets in the "secrets" directory.
-4. Deploy the Kubernetes objects: `./deploy.sh`
+3. Deploy the Kubernetes objects: `./deploy.sh`
     - To delete the Kubernetes objects, run: `./delete.sh`
 
 ### Docker Compose Deployment
@@ -196,6 +186,7 @@ This is intended for development use only. It is meant to make developing other 
 
 - Docker images must be built.
   - To build the images, run: `./build_images.sh`
+- User Service must be deployed via Docker compose.
 
 **Steps:**
 
