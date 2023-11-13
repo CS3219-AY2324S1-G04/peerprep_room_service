@@ -4,4 +4,4 @@ metadata:
   name: room-service-api-config-map
   namespace: peerprep
 data:
-  room-expire-millis: '300000'
+  room-expire-millis: '900000'
