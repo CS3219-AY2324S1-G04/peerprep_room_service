@@ -66,7 +66,7 @@ Legend:
 
 **Database**
 
-- Database for storing user information.
+- Database for storing room information.
 
 **Message Broker**
 
