@@ -163,6 +163,7 @@ fi
 ### Transpile Typescript ###
 echo "Transpiling Typescript ..."
 
+npm install
 npm run build
 
 if [[ $? -ne 0 ]]; then
