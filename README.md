@@ -2,6 +2,8 @@
 
 Manages rooms. Rooms represent user matchings and contains information about said matching such as question assigned and programming language chosen.
 
+Provides endpoints for CRUD operations with regards to user information.
+
 Note that Room Service does not match users together. Said task is handled by Matching Service.
 
 ## Table of Contents
