@@ -20,7 +20,7 @@ Note that Room Service does not match users together. Said task is handled by Ma
 - [REST API](#rest-api)
   - [Create a Room](#create-a-room)
   - [Get a Room by Room ID](#get-a-room-by-room-id)
-  - [Get a Room by User ID](#get-a-room-by-user-id)
+  - [Get a Room by User](#get-a-room-by-user)
   - [Extend the Lifespan of a Room](#extend-the-lifespan-of-a-room)
   - [Remove a User from a Room](#remove-a-user-from-a-room)
   - [Delete a Room](#delete-a-room)
@@ -273,7 +273,7 @@ Gets information about the room whose room ID was specified.
 - `404` - No room was found that has the specified room ID.
 - `500` - Unexpected error occurred on the server.
 
-### Get a Room by User ID
+### Get a Room by User
 
 > [GET] `/room-service/room`
 
