@@ -1,6 +1,8 @@
 # PeerPrep Room Service
 
-Handles the storing and retrieving of room information.
+Manages rooms. Rooms represent user matchings and contains information about said matching such as question assigned and programming language chosen.
+
+Note that Room Service does not match users together. Said task is handled by Matching Service.
 
 ## Table of Contents
 
@@ -48,7 +50,6 @@ Legend:
 **REST API Server**
 
 - Handles REST API requests.
-- Exposed to clients/servers outside the service.
 - Can be scaled horizontally.
 - Corresponds to the [API](#api) docker image.
 
@@ -71,7 +72,6 @@ Legend:
 **Message Broker**
 
 - Message broker for publishing room events.
-- Exposed to clients/servers outside the service.
 
 ## Docker Images
 
@@ -102,7 +102,7 @@ Legend:
 - `USER_SERVICE_PORT` - Port the User Service is listening on.
 - `ROOM_EXPIRE_MILLIS` - Number of milliseconds a room can live for since the last expiry date and time extension.
 - `PORT` - Port to listen on.
-- `NODE_ENV` - Mode the app is running on ("development" or "production").
+- `NODE_ENV` - Mode the app is running on ("development" or "production"). "development" mode enables features such as CORS for "localhost".
 
 ### Database Initialiser
 
@@ -206,7 +206,11 @@ WARNING: This endpoint is potentially abusable. It should be inaccessible by the
 
 **Body**
 
-The body must be of JSON format. It contains the IDs of the users who are in the room and the ID of the question assigned to the room.
+The body must be of JSON format, containing the following fields:
+
+- `user-ids` - Array of user IDs which corresponds to the users in the room.
+- `question-id` - ID of the question assigned to the room.
+- `question-lang-slug` - Language slug of the programming language chosen for the room.
 
 Example request body:
 
