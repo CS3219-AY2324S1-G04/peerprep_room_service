@@ -71,9 +71,9 @@ Legend:
 
 - Database for storing room information.
 
-**Message Broker**
+**MQ**
 
-- Message broker for publishing room events.
+- MQ for publishing room events.
 
 ## Docker Images
 
@@ -157,7 +157,7 @@ This is the main deployment method for production.
 
 **Note:**
 
-- The database and message broker are hosted externally, not within the Kubernetes cluster.
+- The database and MQ are hosted externally, not within the Kubernetes cluster.
 
 **Prerequisite**
 
@@ -182,7 +182,7 @@ This is intended for development use only. It is meant to make developing other 
 
 - No horizontal auto scaling is provided.
 - The database is created by Docker compose and data is not backed up.
-- The message broker is created by Docker compose and data is not backed up.
+- The MQ is created by Docker compose and data is not backed up.
 
 **Prerequisite**
 

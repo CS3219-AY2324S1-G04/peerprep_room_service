@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2023-11-11T07:06:14.543Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="tUAsB3lyh53e_6hq5P_a" version="22.0.3" type="device">
+<mxfile host="Electron" modified="2023-11-14T03:40:55.090Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="q5tuiYhAN1zY5ccbfoNc" version="22.0.3" type="device">
   <diagram name="Page-1" id="DE2Egb7rzKDN__Y2lRfj">
-    <mxGraphModel dx="1437" dy="525" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="988" dy="590" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -119,8 +119,8 @@
         <mxCell id="Gyes6UkAJcrJU4tyv3z2-15" value="&lt;i&gt;Publish &quot;delete room&quot; events&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;spacing=2;horizontal=1;" parent="1" vertex="1">
           <mxGeometry x="241.5" y="570" width="98.5" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Gyes6UkAJcrJU4tyv3z2-17" value="Message Broker" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;spacing=2;horizontal=1;fontStyle=1" parent="1" vertex="1">
-          <mxGeometry x="371.16" y="583.34" width="60" height="28" as="geometry" />
+        <mxCell id="Gyes6UkAJcrJU4tyv3z2-17" value="MQ" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;spacing=2;horizontal=1;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="371.16" y="583.34" width="60" height="16.66" as="geometry" />
         </mxCell>
         <mxCell id="Gyes6UkAJcrJU4tyv3z2-21" value="Fetch expired rooms" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;spacing=2;horizontal=1;fontStyle=2" parent="1" vertex="1">
           <mxGeometry x="241.5" y="610" width="98.5" height="20" as="geometry" />
