@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   room_service_database_initialiser:
-    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_database_initialiser
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_database_initialiser:demo
     build:
       context: .
       dockerfile: ./dockerfiles/database_initialiser.dockerfile
@@ -42,7 +42,7 @@ services:
     restart: on-failure
 
   room_service_expired_room_deleter:
-    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter:demo
     build:
       context: .
       dockerfile: ./dockerfiles/expired_room_deleter.dockerfile
@@ -71,7 +71,7 @@ services:
     restart: unless-stopped
 
   room_service_api:
-    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api
+    image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_api:demo
     build:
       context: .
       dockerfile: ./dockerfiles/api.dockerfile
