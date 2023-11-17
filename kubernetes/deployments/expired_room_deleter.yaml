@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: room-service-expired-room-deleter
-          image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter
+          image: ghcr.io/cs3219-ay2324s1-g04/peerprep_room_service_expired_room_deleter:demo
           env:
             - name: DATABASE_USER
               valueFrom:
